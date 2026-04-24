@@ -9,6 +9,12 @@ argument-hint: "<task>"
 
 Your task: execute the small focused task above, directly. No research phase. No plan phase. Do it carefully and stay in scope.
 
+## Execution rules (important)
+
+- Execute the task immediately. No preamble. No plan announcement.
+- Do not say "I will proceed" or "I am ready". Start with the first tool call (grep, read, edit, etc.).
+- Only pause if you hit the "bail out" conditions below.
+
 ## Your tools
 You have `read`, `write`, `edit`, `bash`, `grep`, `find`, `ls`. That is all.
 

@@ -6,6 +6,10 @@ description: Mid-session intentional compaction. Write current state to a handof
 
 You are tasked with writing a handoff document so another agent (or future-you in a new session) can pick up this work. The document must be thorough but **concise**. Compact the session context without losing any of the key details of what you're working on.
 
+## Execution style
+
+Execute immediately. Gather metadata, write the handoff file, report. No preamble, no "I will now..." announcements.
+
 ## When to use
 - Context window is filling up and quality is degrading
 - You need to start a fresh session but want zero-loss continuity

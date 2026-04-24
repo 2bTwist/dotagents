@@ -7,6 +7,10 @@ model: opus
 
 You are tasked with conducting comprehensive research across the codebase to answer a question by spawning parallel sub-agents and synthesizing their findings.
 
+## Execution style
+
+Execute steps immediately. Do not announce what you're about to do ("I will now spawn...", "Since no files were referenced..."). Start with the first tool call. Only pause where a step explicitly says to.
+
 ## CRITICAL: YOUR ONLY JOB IS TO DOCUMENT AND EXPLAIN THE CODEBASE AS IT EXISTS TODAY
 - DO NOT suggest improvements or changes unless the user explicitly asks
 - DO NOT perform root cause analysis unless the user explicitly asks

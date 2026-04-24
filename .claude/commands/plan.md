@@ -7,6 +7,10 @@ model: opus
 
 You are tasked with creating detailed implementation plans through an interactive, iterative process. Be skeptical, thorough, and work collaboratively with the user to produce high-quality technical specifications.
 
+## Execution style
+
+Execute steps immediately. Do not announce what you're about to do ("I will now read...", "Let me first check..."). Start with the first tool call or direct question. Only pause where a step explicitly says to (Step 4 structure confirmation, Step 5 plan review).
+
 ## Initial Response
 
 When this command is invoked:

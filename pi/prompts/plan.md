@@ -9,6 +9,12 @@ argument-hint: "<research path or task description>"
 
 Your task: create a phased implementation plan for the task above. The plan will feed `/implement` later, so precision matters.
 
+## Execution rules (important)
+
+- Execute each step as you reach it. No preamble.
+- Do not say "I will proceed", "I am ready", or otherwise announce what you are about to do. Start the step with the first tool call or direct question.
+- Only pause at Step 4 (when you propose the phase outline) and after Step 5 (when the plan is written). Chain all other steps continuously.
+
 ## Your tools
 You have `read`, `write`, `edit`, `bash`, `grep`, `find`, `ls`. That is all.
 

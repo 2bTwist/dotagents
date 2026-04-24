@@ -6,6 +6,10 @@ description: Direct execution for small tasks (rename, color change, one-line fi
 
 You are tasked with executing a small, focused task directly. This is the escape hatch for changes that don't warrant full Research → Plan → Implement. Use it when the task is contained, obvious, and low-risk.
 
+## Execution style
+
+Execute immediately. No preamble. No plan announcement. Start with the first tool call (grep, read, edit). Only pause if the "bail out" conditions trip.
+
 ## When to use
 
 - Renames (variable, function, file)

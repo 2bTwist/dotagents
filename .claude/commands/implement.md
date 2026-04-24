@@ -6,6 +6,10 @@ description: Execute an approved plan from specs/plans/ one phase at a time, tic
 
 You are tasked with implementing an approved technical plan from `specs/plans/` (or wherever the user points). These plans contain phases with specific changes and success criteria.
 
+## Execution style
+
+Execute steps immediately. Do not announce ("I will now read the plan...", "Let me first..."). Start with reading the plan. Only pause between phases (for manual verification) or on explicit mismatch.
+
 ## Getting Started
 
 When given a plan path:

@@ -9,6 +9,13 @@ argument-hint: "<question or topic>"
 
 Your task: produce a research document on the topic above. Document how it works today, with precise file:line references.
 
+## Execution rules (important)
+
+- Execute each step as you reach it. No preamble.
+- Do not say "I will proceed", "I am ready", "Since no files were referenced", or otherwise announce what you are about to do. Start the step with the first tool call.
+- Do not pause between steps. Run Step 1 → Step 2 → Step 3 → Step 4 → Step 5 → Step 6 continuously in one turn.
+- No step in this workflow has a pause point. Do not wait for user input.
+
 ## Your tools
 You have `read`, `write`, `edit`, `bash`, `grep`, `find`, `ls`. That is all. Do not invent other tools.
 

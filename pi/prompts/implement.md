@@ -9,6 +9,12 @@ argument-hint: "<plan path>"
 
 Your task: execute the approved plan at the path above, one phase at a time. The plan is the authority. Do not go beyond its scope.
 
+## Execution rules (important)
+
+- Execute each step of the current phase without preamble.
+- Do not say "I will proceed", "I am ready", or otherwise announce what you are about to do. Start with reading the plan, then begin the first unchecked phase.
+- Pause only at the end of each phase (for manual verification) and on explicit mismatch. Otherwise chain steps continuously.
+
 ## Your tools
 You have `read`, `write`, `edit`, `bash`, `grep`, `find`, `ls`. That is all.
 
