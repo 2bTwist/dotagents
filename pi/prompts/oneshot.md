@@ -5,7 +5,12 @@ argument-hint: "<task>"
 
 # One-shot: $@
 
+**If the line above shows no task after "One-shot:", stop and ask what the task is. Do not proceed without one.**
+
 You are executing a small, focused task directly. No research phase. No plan phase. Just do it carefully and stay in scope.
+
+## Your tools
+You have `read`, `write`, `edit`, `bash`, `grep`, `find`, `ls`. That is all.
 
 ## When this prompt is appropriate
 

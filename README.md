@@ -72,22 +72,22 @@ After install, start a fresh agent session. Slash commands appear automatically.
 
 | Command | Purpose |
 |---|---|
-| `/research` | Same idea as Claude's, but invokes sub-agent skills sequentially (Pi has no parallel dispatch). Writes to `specs/research/YYYY-MM-DD-<slug>.md`. |
+| `/research` | Same idea as Claude's, but the sub-agent rules (locate → analyze → document) are inlined directly into the prompt. Pi has no model-dispatched sub-agents, so the main session walks the steps using grep/find/read. Writes to `specs/research/YYYY-MM-DD-<slug>.md`. |
 | `/plan` | Phased plans at `specs/plans/YYYY-MM-DD-<slug>.md`. Tuned for smaller local models: fewer phases, shorter snippets. |
 | `/implement` | Phase-by-phase execution with pauses for manual verification. |
 | `/oneshot` | Small-task escape hatch. Same shape as Claude's. |
 
 **No `/compact` for Pi.** Pi ships native `/compact` with auto-compaction and a well-designed structured summary format (Goal → Progress → Next Steps → Critical Context). Use Pi's version.
 
-**Sub-agent skills** (`pi/skills/`):
+**Sub-agent skills** (`pi/skills/`) — user-invoked, optional:
 
 | Skill | Purpose |
 |---|---|
-| `codebase-locator` | Invokable as `/skill:codebase-locator`. Same rules as Claude's. |
-| `codebase-analyzer` | Invokable as `/skill:codebase-analyzer`. |
-| `codebase-pattern-finder` | Invokable as `/skill:codebase-pattern-finder`. |
+| `codebase-locator` | Invoke as `/skill:codebase-locator <question>`. Same rules as Claude's. |
+| `codebase-analyzer` | Invoke as `/skill:codebase-analyzer <question>`. |
+| `codebase-pattern-finder` | Invoke as `/skill:codebase-pattern-finder <question>`. |
 
-Pi skills load instructions into the main model's context (they don't fork like Claude's sub-agents). The `/research` prompt template invokes them sequentially. Less context-saving than Claude, but cleaner than stuffing everything into one mega-prompt.
+Pi skills are **user-triggered slash commands**, not model-dispatched sub-agents. Typing `/skill:codebase-locator ...` loads that skill's rules into your current Pi session. The model cannot invoke skills on its own — they are a user control, not a callable tool. The `/research` and `/plan` prompt templates don't rely on skills; they inline the same discipline directly, so the workflow works whether or not you invoke the skills manually. Use the skills when you want a single-purpose, scoped session.
 
 **AGENTS.md workflow section** (`pi/AGENTS.workflow-section.md`): A snippet to append to your `~/.pi/agent/AGENTS.md` that teaches Pi about the new commands and skills. The installer does not overwrite your existing `AGENTS.md` — copy the section manually.
 

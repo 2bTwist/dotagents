@@ -5,7 +5,12 @@ argument-hint: "<plan path>"
 
 # Implement: $@
 
+**If the line above shows no plan path after "Implement:", stop and ask which plan to execute. Do not proceed without one.**
+
 You are executing an approved plan. The plan is the authority. Do not go beyond its scope.
+
+## Your tools
+You have `read`, `write`, `edit`, `bash`, `grep`, `find`, `ls`. That is all.
 
 ## Hard rules
 

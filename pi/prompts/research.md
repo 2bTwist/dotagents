@@ -1,46 +1,57 @@
 ---
-description: Map how a feature/area of the codebase works today. Writes to specs/research/YYYY-MM-DD-<slug>.md
+description: Map how an area of the codebase works today. Writes to specs/research/YYYY-MM-DD-<slug>.md
 argument-hint: "<question or topic>"
 ---
 
 # Research: $@
 
-You are documenting how this area of the codebase works. Produce a research document, not an opinion piece.
+**If the line above shows no question after "Research:", stop and ask the user what they want researched. Do not proceed without a topic.**
+
+You are documenting how an area of this codebase works today. Produce a research document, not an opinion piece.
+
+## Your tools
+You have `read`, `write`, `edit`, `bash`, `grep`, `find`, `ls`. That is all. Do not invent other tools.
 
 ## Hard rules
 
-- Document what IS, not what SHOULD BE.
-- No recommendations, no critique, no "should", no "could be improved".
-- Read files FULLY (never partial). Small models drift when they skim.
-- Use file:line references for every claim.
-- If the user mentioned specific files, read them FIRST, in full, before doing anything else.
+- Document what IS, not what SHOULD BE. No recommendations, no critique, no "should", no "could be improved".
+- Read files FULLY. Use `read` with a path. Do not pass line ranges.
+- Use file:line references for every specific claim.
+- If the user mentioned specific files, tickets, or commits, read them FIRST, completely, before anything else.
 
-## Steps
+## Workflow (follow in order)
 
-### 1. Read any mentioned files
-If the user referenced specific files, tickets, or commits in the prompt above, read them completely now using `read` or `bash`. Do not skim.
+### Step 1: Read any mentioned inputs
+If the user referenced files, commits, or tickets, read them fully now using `read` or `bash` (`git show <sha>`).
 
-### 2. Locate (sequential skills)
-Invoke `/skill:codebase-locator` with a specific question about where the relevant files live. Wait for its output. Do not load analyzer until locator has finished.
+### Step 2: Locate relevant files
+Use `grep`, `find`, and `ls` to find files related to the topic. Do NOT read file contents in this step — just build a list of paths grouped by purpose:
 
-### 3. Analyze
-Invoke `/skill:codebase-analyzer` with a specific question about how the located files work together. Use the file list from step 2 as input. Trace data flow with file:line references.
+- Implementation (`*service*`, `*handler*`, `*store*`, core logic)
+- Tests (`*test*`, `*spec*`, `__tests__`)
+- Config (`*.config.*`, `*rc*`)
+- Types (`*.d.ts`, `*.types.*`)
 
-### 4. Find patterns (optional)
-If the research involves comparing to existing patterns, invoke `/skill:codebase-pattern-finder`. Skip this step if not needed.
+### Step 3: Analyze
+Now `read` each relevant file fully. Trace how they work together. For each file note entry points, what it does, and how it connects to other files. Keep file:line references.
 
-### 5. Gather metadata
-Run these in one bash call:
+Rules for this step:
+- Describe only. No quality evaluation. No suggestions. No critiques.
+- If you find a pattern in use (factory, middleware chain, store update), name it with its file:line location.
+
+### Step 4: Gather metadata
+Run one bash call:
+
 ```bash
 mkdir -p specs/research
-echo "commit=$(git rev-parse --short HEAD 2>/dev/null || echo none)"
-echo "branch=$(git branch --show-current 2>/dev/null || echo none)"
-echo "repo=$(basename "$(git rev-parse --show-toplevel 2>/dev/null || pwd)")"
-echo "date=$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+git rev-parse --short HEAD 2>/dev/null || echo none
+git branch --show-current 2>/dev/null || echo none
+basename "$(git rev-parse --show-toplevel 2>/dev/null || pwd)"
+date -u +%Y-%m-%dT%H:%M:%SZ
 ```
 
-### 6. Write the research doc
-Pick a kebab-case slug describing the topic. Write to `specs/research/YYYY-MM-DD-<slug>.md` using this structure:
+### Step 5: Write the research doc
+Pick a kebab-case slug describing the topic. Write to `specs/research/YYYY-MM-DD-<slug>.md` with this shape:
 
 ```markdown
 ---
@@ -55,15 +66,15 @@ status: complete
 # Research: <topic>
 
 ## Summary
-<3-5 sentence high-level answer. What exists, in plain language.>
+<3-5 sentence high-level answer in plain language.>
 
 ## Detailed Findings
 
-### <Component 1>
+### <Component/Area 1>
 - <What exists> (`file.ext:line`)
 - <How it connects to other pieces>
 
-### <Component 2>
+### <Component/Area 2>
 ...
 
 ## Code References
@@ -74,18 +85,13 @@ status: complete
 <Anything the research couldn't pin down.>
 ```
 
-### 7. Report
-Tell the user where the doc was written. Give a 3-bullet summary of the key findings. Offer to kick off `/plan` next.
-
-## If you get stuck
-
-If a skill invocation fails or returns nothing useful, fall back to direct `bash`, `grep`, `find`, `read` tool use. Don't abandon the research.
-
-If the codebase is too large to map in one pass, narrow the question and tell the user. "I can map the auth flow OR the session refresh logic, but not both in one pass — which do you want first?" is a valid response.
+### Step 6: Report
+Tell the user where the doc was written. Give a 3-bullet summary of the key findings.
 
 ## Anti-patterns
 
-- Dumping entire file contents into the doc (use file:line references instead)
-- Writing recommendations, suggestions, or critique
-- Saying "this should" or "this could" — the user will delete those sections
-- Skipping the skills and writing the doc from guesses
+- Dumping file contents into the research doc. Use file:line references instead.
+- Writing "this should" or "this could". That's the plan phase's job, not research.
+- Skipping reads and guessing. Read first, write second.
+- Calling a tool that does not exist. Your tools are listed above — `read`, `write`, `edit`, `bash`, `grep`, `find`, `ls`. Nothing else.
+- Trying to delegate to another agent. Pi has no parallel dispatch. You do the work in this one session.
