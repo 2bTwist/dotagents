@@ -3,11 +3,11 @@ description: Build a phased implementation plan. Takes a task + optional researc
 argument-hint: "<research path or task description>"
 ---
 
-# Plan: $@
+# Plan Task
 
-**If the line above shows nothing after "Plan:", stop and ask what the user wants to plan. Do not proceed without a task.**
+> $@
 
-You are creating a phased implementation plan. The plan will feed `/implement` later, so precision matters.
+Your task: create a phased implementation plan for the task above. The plan will feed `/implement` later, so precision matters.
 
 ## Your tools
 You have `read`, `write`, `edit`, `bash`, `grep`, `find`, `ls`. That is all.

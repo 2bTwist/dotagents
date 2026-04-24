@@ -3,11 +3,11 @@ description: Map how an area of the codebase works today. Writes to specs/resear
 argument-hint: "<question or topic>"
 ---
 
-# Research: $@
+# Research Topic
 
-**If the line above shows no question after "Research:", stop and ask the user what they want researched. Do not proceed without a topic.**
+> $@
 
-You are documenting how an area of this codebase works today. Produce a research document, not an opinion piece.
+Your task: produce a research document on the topic above. Document how it works today, with precise file:line references.
 
 ## Your tools
 You have `read`, `write`, `edit`, `bash`, `grep`, `find`, `ls`. That is all. Do not invent other tools.
