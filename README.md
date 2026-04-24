@@ -66,6 +66,12 @@ After install, start a fresh agent session. Slash commands appear automatically.
 | `codebase-analyzer` | "How does X work?" Reads files, returns file:line-anchored explanations. No critique. | Read, Grep, Glob, LS | `sonnet` |
 | `codebase-pattern-finder` | "Show me existing examples of pattern X." Returns actual working code. | Grep, Glob, Read, LS | `sonnet` |
 
+**Skills** (`.claude/skills/`):
+
+| Skill | Purpose |
+|---|---|
+| `grill-me` | Interviews you relentlessly about a plan or design. Pairs upstream of `/plan` to stress-test a vague idea before it becomes a plan. Vendored from [mattpocock/skills](https://github.com/mattpocock/skills) under MIT. |
+
 ### For Pi (`pi/`)
 
 **Prompt templates** (`pi/prompts/`):
@@ -86,6 +92,7 @@ After install, start a fresh agent session. Slash commands appear automatically.
 | `codebase-locator` | Invoke as `/skill:codebase-locator <question>`. Same rules as Claude's. |
 | `codebase-analyzer` | Invoke as `/skill:codebase-analyzer <question>`. |
 | `codebase-pattern-finder` | Invoke as `/skill:codebase-pattern-finder <question>`. |
+| `grill-me` | Invoke as `/skill:grill-me <idea or plan>`. Same skill as Claude's, vendored from Matt Pocock. |
 
 Pi skills are **user-triggered slash commands**, not model-dispatched sub-agents. Typing `/skill:codebase-locator ...` loads that skill's rules into your current Pi session. The model cannot invoke skills on its own — they are a user control, not a callable tool. The `/research` and `/plan` prompt templates don't rely on skills; they inline the same discipline directly, so the workflow works whether or not you invoke the skills manually. Use the skills when you want a single-purpose, scoped session.
 
@@ -200,6 +207,7 @@ These aren't abstract — they're enforced by the prompts themselves. Every docu
 
 - **Dex Horthy ([@dexhorthy](https://github.com/dexhorthy))** and the **[HumanLayer](https://humanlayer.dev)** team — the methodology, the original prompts, and most of the structural choices in this kit. The commands and agents are adapted from [humanlayer/humanlayer/.claude](https://github.com/humanlayer/humanlayer/tree/main/.claude) with their names and core rules preserved. HumanLayer's code is Apache 2.0 licensed; adapted portions retain that attribution.
 - **Mario Zechner ([@badlogic](https://github.com/badlogic))** — for [Pi](https://github.com/badlogic/pi-mono), the local-first coding-agent CLI. The prompt-template and skill architecture made porting this kit to Pi straightforward.
+- **Matt Pocock ([@mattpocock](https://github.com/mattpocock))** — for the [grill-me skill](https://github.com/mattpocock/skills/tree/main/grill-me), vendored here under his MIT license. The "explore the codebase instead of asking" rule is a design insight worth studying. See [his writeup](https://www.aihero.dev/my-grill-me-skill-has-gone-viral).
 - **Geoff Huntley ([@ghuntley](https://ghuntley.com))** — the "Ralph Wiggum" loop, the 170k-token resource framing, and the discipline of minimizing context window usage. This kit's compaction patterns trace back to his work.
 - **Sean Grove** — the "specs are the new code" framing that underpins why `/research` and `/plan` produce persistent, reviewable artifacts.
 - **Anthropic** for Claude Code and the Agent Skills standard.

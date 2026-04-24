@@ -78,11 +78,13 @@ echo
 if $INSTALL_CLAUDE; then
   SRC_CLAUDE_COMMANDS="$REPO_DIR/.claude/commands"
   SRC_CLAUDE_AGENTS="$REPO_DIR/.claude/agents"
+  SRC_CLAUDE_SKILLS="$REPO_DIR/.claude/skills"
   DEST_CLAUDE_COMMANDS="$HOME/.claude/commands"
   DEST_CLAUDE_AGENTS="$HOME/.claude/agents"
+  DEST_CLAUDE_SKILLS="$HOME/.claude/skills"
 
   say "Claude Code destination: $HOME/.claude/"
-  do_cmd "mkdir -p '$DEST_CLAUDE_COMMANDS' '$DEST_CLAUDE_AGENTS'"
+  do_cmd "mkdir -p '$DEST_CLAUDE_COMMANDS' '$DEST_CLAUDE_AGENTS' '$DEST_CLAUDE_SKILLS'"
 
   echo "Claude commands:"
   for f in "$SRC_CLAUDE_COMMANDS"/*.md; do
@@ -94,6 +96,14 @@ if $INSTALL_CLAUDE; then
   for f in "$SRC_CLAUDE_AGENTS"/*.md; do
     install_one "$f" "$DEST_CLAUDE_AGENTS"
   done
+
+  echo
+  echo "Claude skills:"
+  if [[ -d "$SRC_CLAUDE_SKILLS" ]]; then
+    for d in "$SRC_CLAUDE_SKILLS"/*/; do
+      [[ -d "$d" ]] && install_one "${d%/}" "$DEST_CLAUDE_SKILLS"
+    done
+  fi
   echo
 fi
 
