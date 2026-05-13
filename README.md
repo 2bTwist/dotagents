@@ -39,6 +39,7 @@ Flags:
 - `./install.sh --symlink` — symlink instead of copy (edits in this repo apply immediately)
 - `./install.sh --force` — overwrite existing files
 - `./install.sh --dry-run` — show what would happen
+- `./install.sh --with-domain-skills`: also installs the opt-in domain skills under [`domain-skills/`](#domain-skills-opt-in)
 
 After install, start a fresh agent session. Slash commands appear automatically.
 
@@ -104,6 +105,36 @@ Pi skills are **user-triggered slash commands**, not model-dispatched sub-agents
 ### Memory templates (`memory-templates/`)
 
 Sample generic memory files (`preferences.md`, `collaboration.md`, `MEMORY.md` index) showing the structure. Drop them into your per-project memory directory as a starting point and customize. These are templates, not prescriptive. Claude Code memory lives at `~/.claude/projects/<encoded-path>/memory/` per project.
+
+---
+
+## Domain skills (opt-in)
+
+Everything above is **topic-agnostic coding-agent workflow**. The `domain-skills/` directory is for **domain-specific skills** that are useful to me but aren't part of the ACE-FCA methodology and aren't relevant to most readers of this repo. They live in a separate directory, ship with the repo, but install only when you opt in.
+
+```
+domain-skills/
+  claude/           # installs into ~/.claude/skills/
+  pi/               # installs into ~/.pi/agent/skills/
+```
+
+Install with the flag:
+
+```bash
+./install.sh --with-domain-skills
+```
+
+Currently included, all mobile / App Store Optimization:
+
+| Skill | Harness | Purpose |
+|---|---|---|
+| `aso-audit` | Claude + Pi | Full ASO health audit: review App Store listing quality, diagnose ranking issues, produce a prioritized action plan. |
+| `keyword-ranks` | Claude | Pull current App Store keyword ranks via Apple's free iTunes Search API. Bypasses paid ASO tools (Astro, AppTweak, SensorTower). |
+| `aso-and-apple-ads` | Claude | ASO + Apple Search Ads strategy reference: indexing fields, keyword research, campaign setup, pricing/monetization, localization. |
+
+**Heads up:** `aso-audit/SKILL.md` references two companion skills (`keyword-research`, `metadata-optimization`) that aren't published in this repo yet. The references are informational; nothing breaks if the companions aren't installed.
+
+If you're not doing mobile work, just skip the flag. The default install gives you only the methodology kit.
 
 ---
 

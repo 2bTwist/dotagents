@@ -5,12 +5,13 @@
 # into ~/.pi/agent/ (Pi, if installed). Works for either or both harnesses.
 #
 # Usage:
-#   ./install.sh                 # install for all detected harnesses (safe default, won't overwrite)
-#   ./install.sh --claude-only   # install only Claude Code bits
-#   ./install.sh --pi-only       # install only Pi bits
-#   ./install.sh --force         # overwrite existing files
-#   ./install.sh --symlink       # symlink instead of copy (edits to this repo apply immediately)
-#   ./install.sh --dry-run       # show what would happen
+#   ./install.sh                       # install for all detected harnesses (safe default, won't overwrite)
+#   ./install.sh --claude-only         # install only Claude Code bits
+#   ./install.sh --pi-only             # install only Pi bits
+#   ./install.sh --with-domain-skills  # also install domain skills (mobile/ASO etc.) from domain-skills/
+#   ./install.sh --force               # overwrite existing files
+#   ./install.sh --symlink             # symlink instead of copy (edits to this repo apply immediately)
+#   ./install.sh --dry-run             # show what would happen
 #
 
 set -euo pipefail
@@ -20,6 +21,7 @@ FORCE=false
 DRY_RUN=false
 INSTALL_CLAUDE=true
 INSTALL_PI=true
+WITH_DOMAIN_SKILLS=false
 
 for arg in "$@"; do
   case "$arg" in
@@ -28,8 +30,9 @@ for arg in "$@"; do
     --dry-run) DRY_RUN=true ;;
     --claude-only) INSTALL_PI=false ;;
     --pi-only) INSTALL_CLAUDE=false ;;
+    --with-domain-skills) WITH_DOMAIN_SKILLS=true ;;
     -h|--help)
-      grep '^#' "$0" | sed 's/^# \?//' | head -25
+      grep '^#' "$0" | sed 's/^# \?//' | head -27
       exit 0
       ;;
     *) echo "Unknown arg: $arg"; exit 1 ;;
@@ -104,6 +107,17 @@ if $INSTALL_CLAUDE; then
       [[ -d "$d" ]] && install_one "${d%/}" "$DEST_CLAUDE_SKILLS"
     done
   fi
+
+  if $WITH_DOMAIN_SKILLS; then
+    SRC_DOMAIN_CLAUDE="$REPO_DIR/domain-skills/claude"
+    if [[ -d "$SRC_DOMAIN_CLAUDE" ]]; then
+      echo
+      echo "Claude domain skills:"
+      for entry in "$SRC_DOMAIN_CLAUDE"/*; do
+        [[ -e "$entry" ]] && install_one "$entry" "$DEST_CLAUDE_SKILLS"
+      done
+    fi
+  fi
   echo
 fi
 
@@ -131,6 +145,17 @@ if $INSTALL_PI; then
     for d in "$SRC_PI_SKILLS"/*/; do
       install_one "${d%/}" "$DEST_PI_SKILLS"
     done
+
+    if $WITH_DOMAIN_SKILLS; then
+      SRC_DOMAIN_PI="$REPO_DIR/domain-skills/pi"
+      if [[ -d "$SRC_DOMAIN_PI" ]]; then
+        echo
+        echo "Pi domain skills:"
+        for entry in "$SRC_DOMAIN_PI"/*; do
+          [[ -e "$entry" ]] && install_one "$entry" "$DEST_PI_SKILLS"
+        done
+      fi
+    fi
 
     echo
     say "Heads up: Pi's ~/.pi/agent/AGENTS.md is NOT overwritten automatically."
