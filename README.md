@@ -52,6 +52,7 @@ After install, start a fresh agent session. Slash commands appear automatically.
 
 | Command | Purpose | Model |
 |---|---|---|
+| `/groundwork` | Lay the foundation before acting on a task class that's new in the repo. Crawls published agent-skill collections, vendor docs, and 2-3 reputable reference repos, then writes a phased cleanup plan at `specs/plans/YYYY-MM-DD-groundwork-<slug>.md`. Hands off to `/grill-me` and `/implement`. Topic-agnostic: no hardcoded task classes, authors, or stacks. | `opus` |
 | `/research` | Map how an area of the codebase works today. Spawns parallel sub-agents, synthesizes to `specs/research/YYYY-MM-DD-<slug>.md`. Strict no-recommendations rule. | `opus` |
 | `/plan` | Turn a task (plus optional research doc) into a phased plan at `specs/plans/YYYY-MM-DD-<slug>.md`. Interactive, skeptical, includes code snippets and split automated/manual verification per phase. | `opus` |
 | `/implement` | Execute a plan phase by phase. Ticks automated checkboxes. Pauses for manual verification between phases. Stops on mismatch. | inherit |
@@ -84,6 +85,8 @@ After install, start a fresh agent session. Slash commands appear automatically.
 | `/oneshot` | Small-task escape hatch. Same shape as Claude's. |
 
 **No `/compact` for Pi.** Pi ships native `/compact` with auto-compaction and a well-designed structured summary format (Goal → Progress → Next Steps → Critical Context). Use Pi's version.
+
+**No `/groundwork` for Pi.** Groundwork crawls multiple skill repos, vendor docs, and 2-3 reference codebases via `gh api`, WebFetch, and a parallel Explore sub-agent. That research load doesn't fit a 32k local-model context window, and Pi's web/search skills are opt-in rather than first-class. On Pi, do the foundation work in a Claude session and pick up at `/plan` and `/implement` locally if you want to keep execution off-device.
 
 **Sub-agent skills** (`pi/skills/`) — user-invoked, optional:
 
@@ -122,6 +125,8 @@ Same shape on both harnesses. Example for Claude Code:
   -> you verify, tell it to proceed to phase 2
   -> repeat
 ```
+
+For task classes that are **new in the repo** (first time adding rate limiting, first background job system, brand-new project type), reach for `/groundwork` upstream of `/plan`. It crawls canonical guidance and 2-3 reference repos and writes a phased cleanup plan you can hand straight to `/grill-me` and `/implement`. Skip it for work that has prior art in the repo — `/research` already covers that ground.
 
 For small tweaks: skip RPI, use `/oneshot` or just talk to the agent directly. RPI is for hard problems, not every task.
 
