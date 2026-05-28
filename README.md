@@ -54,6 +54,7 @@ After install, start a fresh agent session. Slash commands appear automatically.
 | Command | Purpose | Model |
 |---|---|---|
 | `/groundwork` | Lay the foundation before acting on a task class that's new in the repo. Crawls published agent-skill collections, vendor docs, and 2-3 reputable reference repos, then writes a phased cleanup plan at `specs/plans/YYYY-MM-DD-groundwork-<slug>.md`. Hands off to `/grill-me` and `/implement`. Topic-agnostic: no hardcoded task classes, authors, or stacks. | `opus` |
+| `/first-principles` | Produce a first-principles re-framing of a substantial task or decision before `/plan`. The agent names the conventional incumbent approach, questions whether its core assumptions still hold, decomposes the problem into atomic primitives, and proposes the embarrassingly-good rebuild of the primitive most worth rethinking. Writes a 7-section analysis to `specs/first-principles/YYYY-MM-DD-<slug>.md`. Pierre Computer Company is the originating reference; [CANON.md](.claude/skills/first-principles/CANON.md) extends the lineage (Linear, Stripe, Figma, Tarsnap, suckless, Bret Victor, Christopher Alexander). | `opus` |
 | `/research` | Map how an area of the codebase works today. Spawns parallel sub-agents, synthesizes to `specs/research/YYYY-MM-DD-<slug>.md`. Strict no-recommendations rule. | `opus` |
 | `/plan` | Turn a task (plus optional research doc) into a phased plan at `specs/plans/YYYY-MM-DD-<slug>.md`. Interactive, skeptical, includes code snippets and split automated/manual verification per phase. | `opus` |
 | `/implement` | Execute a plan phase by phase. Ticks automated checkboxes. Pauses for manual verification between phases. Stops on mismatch. | inherit |
@@ -73,6 +74,7 @@ After install, start a fresh agent session. Slash commands appear automatically.
 | Skill | Purpose |
 |---|---|
 | `grill-me` | Interviews you relentlessly about a plan or design. Pairs upstream of `/plan` to stress-test a vague idea before it becomes a plan. Vendored from [mattpocock/skills](https://github.com/mattpocock/skills) under MIT. |
+| `first-principles` | Backs the `/first-principles` slash command. Holds the 7-section analysis spec, the parallel sub-agent dispatch, the negative-result mode, and the iteration rule. Ships with a separate [`CANON.md`](.claude/skills/first-principles/CANON.md) of anchor examples the agent reaches for when an analogy sharpens the analysis. Explicit-only (`disable-model-invocation: true`) — never auto-fires. |
 
 ### For Pi (`pi/`)
 
@@ -88,6 +90,8 @@ After install, start a fresh agent session. Slash commands appear automatically.
 **No `/compact` for Pi.** Pi ships native `/compact` with auto-compaction and a well-designed structured summary format (Goal → Progress → Next Steps → Critical Context). Use Pi's version.
 
 **No `/groundwork` for Pi.** Groundwork crawls multiple skill repos, vendor docs, and 2-3 reference codebases via `gh api`, WebFetch, and a parallel Explore sub-agent. That research load doesn't fit a 32k local-model context window, and Pi's web/search skills are opt-in rather than first-class. On Pi, do the foundation work in a Claude session and pick up at `/plan` and `/implement` locally if you want to keep execution off-device.
+
+**No `/first-principles` for Pi.** Same reason as `/groundwork`: the skill dispatches three parallel sub-agents (conventional-approach mapper, recent-shifts analyst, repo decomposer) that each do web + repo synthesis. The multi-source load exceeds a 32k local-model context window. On Pi, run `/first-principles` in a Claude session, then pick up the resulting doc at `/plan` and `/implement` locally.
 
 **Sub-agent skills** (`pi/skills/`) — user-invoked, optional:
 
@@ -246,6 +250,8 @@ These aren't abstract — they're enforced by the prompts themselves. Every docu
 - **Matt Pocock ([@mattpocock](https://github.com/mattpocock))** — for the [grill-me skill](https://github.com/mattpocock/skills/tree/main/grill-me), vendored here under his MIT license. The "explore the codebase instead of asking" rule is a design insight worth studying. See [his writeup](https://www.aihero.dev/my-grill-me-skill-has-gone-viral).
 - **Geoff Huntley ([@ghuntley](https://ghuntley.com))** — the "Ralph Wiggum" loop, the 170k-token resource framing, and the discipline of minimizing context window usage. This kit's compaction patterns trace back to his work.
 - **Sean Grove** — the "specs are the new code" framing that underpins why `/research` and `/plan` produce persistent, reviewable artifacts.
+- **[Pierre Computer Company](https://pierre.computer)** (Jon Crosby, [Nicolas Gallagher](https://nicolasgallagher.com/), team) — for `/first-principles`. The originating reference for the skill: their unbundling of git collaboration into atomic primitives (code.storage, diffs.com, trees.software, diffshub.com) after sunsetting pierre.co is the canonical recent example of "name the lazy bias, decompose, rebuild one primitive with craft." See [pierre.computer](https://pierre.computer).
+- **Bret Victor** (["Inventing on Principle"](https://vimeo.com/36579366), 2012) and **Christopher Alexander** (*A Pattern Language*, 1977) — the intellectual lineage for `/first-principles`. Victor frames principled design as refusing to accept how the world currently does X. Alexander shows what disciplined primitive-decomposition looks like at scale.
 - **Anthropic** for Claude Code and the Agent Skills standard.
 
 ---
