@@ -166,7 +166,7 @@ fi
 
 say "Done."
 if $INSTALL_CLAUDE; then
-  say "Claude: start a fresh session. Slash commands: /groundwork /research /plan /implement /compact /oneshot"
+  say "Claude: start a fresh session. Slash commands: /groundwork /first-principles /research /plan /implement /compact /oneshot"
 fi
 if $INSTALL_PI; then
   say "Pi: start a fresh session. Slash commands: /research /plan /implement /oneshot (Pi has its own /compact native)"
