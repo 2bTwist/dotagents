@@ -114,8 +114,44 @@ if $INSTALL_CLAUDE; then
       echo
       echo "Claude domain skills:"
       for entry in "$SRC_DOMAIN_CLAUDE"/*; do
+        # autoresearch is multi-target (skill + command + hook); handled separately below
+        [[ "$(basename "$entry")" == "autoresearch" ]] && continue
         [[ -e "$entry" ]] && install_one "$entry" "$DEST_CLAUDE_SKILLS"
       done
+    fi
+
+    SRC_AUTORESEARCH="$REPO_DIR/domain-skills/claude/autoresearch"
+    if [[ -d "$SRC_AUTORESEARCH" ]]; then
+      DEST_CLAUDE_HOOKS="$HOME/.claude/hooks"
+      do_cmd "mkdir -p '$DEST_CLAUDE_HOOKS'"
+
+      echo
+      echo "Claude autoresearch (skill + command + hook):"
+      install_one "$SRC_AUTORESEARCH/skills/autoresearch" "$DEST_CLAUDE_SKILLS"
+      install_one "$SRC_AUTORESEARCH/commands/autoresearch.md" "$DEST_CLAUDE_COMMANDS"
+      # Hook script needs a stable absolute path — always copy, never symlink
+      DEST_HOOK="$DEST_CLAUDE_HOOKS/autoresearch-context.sh"
+      if [[ -e "$DEST_HOOK" ]] && ! $FORCE; then
+        echo "  skip  $DEST_HOOK (exists, use --force to overwrite)"
+      else
+        do_cmd "cp '$SRC_AUTORESEARCH/hooks/autoresearch-context.sh' '$DEST_HOOK'"
+        do_cmd "chmod +x '$DEST_HOOK'"
+        echo "  copy  $DEST_HOOK"
+      fi
+
+      SETTINGS="$HOME/.claude/settings.json"
+      if [[ -f "$SETTINGS" ]] && grep -q "autoresearch-context.sh" "$SETTINGS" 2>/dev/null; then
+        say "Autoresearch hook already wired into $SETTINGS"
+      else
+        echo
+        say "Final step (manual): add the autoresearch hook to $SETTINGS"
+        echo '      "hooks": {'
+        echo '        "UserPromptSubmit": ['
+        echo '          { "hooks": [ { "type": "command", "command": "~/.claude/hooks/autoresearch-context.sh" } ] }'
+        echo '        ]'
+        echo '      }'
+        echo
+      fi
     fi
   fi
   echo

@@ -128,7 +128,9 @@ Install with the flag:
 ./install.sh --with-domain-skills
 ```
 
-Currently included, all mobile / App Store Optimization:
+Currently included:
+
+**Mobile / App Store Optimization**
 
 | Skill | Harness | Purpose |
 |---|---|---|
@@ -138,7 +140,15 @@ Currently included, all mobile / App Store Optimization:
 
 **Heads up:** `aso-audit/SKILL.md` references two companion skills (`keyword-research`, `metadata-optimization`) that aren't published in this repo yet. The references are informational; nothing breaks if the companions aren't installed.
 
-If you're not doing mobile work, just skip the flag. The default install gives you only the methodology kit.
+**Autonomous optimization loops**
+
+| Skill | Harness | Purpose |
+|---|---|---|
+| `autoresearch` | Claude | Karpathy-style autonomous experiment loop. Give it a goal, a benchmark, and files to modify; it loops forever (try → measure → keep winners → discard losers). Vendored from [drivelineresearch/autoresearch-claude-code](https://github.com/drivelineresearch/autoresearch-claude-code) — see [`domain-skills/claude/autoresearch/README.md`](domain-skills/claude/autoresearch/README.md). |
+
+After running `./install.sh --with-domain-skills`, `autoresearch` needs **one extra manual step**: register its `UserPromptSubmit` hook in `~/.claude/settings.json`. The installer prints the exact JSON snippet to add. Without that step the slash command still works but the cross-prompt context-injection (which keeps the loop alive between unrelated messages) won't fire.
+
+If you're not doing mobile work or running optimization loops, just skip the flag. The default install gives you only the methodology kit.
 
 ---
 
@@ -248,6 +258,7 @@ These aren't abstract — they're enforced by the prompts themselves. Every docu
 - **Dex Horthy ([@dexhorthy](https://github.com/dexhorthy))** and the **[HumanLayer](https://humanlayer.dev)** team — the methodology, the original prompts, and most of the structural choices in this kit. The commands and agents are adapted from [humanlayer/humanlayer/.claude](https://github.com/humanlayer/humanlayer/tree/main/.claude) with their names and core rules preserved. HumanLayer's code is Apache 2.0 licensed; adapted portions retain that attribution.
 - **Mario Zechner ([@badlogic](https://github.com/badlogic))** — for [Pi](https://github.com/badlogic/pi-mono), the local-first coding-agent CLI. The prompt-template and skill architecture made porting this kit to Pi straightforward.
 - **Matt Pocock ([@mattpocock](https://github.com/mattpocock))** — for the [grill-me skill](https://github.com/mattpocock/skills/tree/main/grill-me), vendored here under his MIT license. The "explore the codebase instead of asking" rule is a design insight worth studying. See [his writeup](https://www.aihero.dev/my-grill-me-skill-has-gone-viral).
+- **Driveline Research ([drivelineresearch/autoresearch-claude-code](https://github.com/drivelineresearch/autoresearch-claude-code))** — for porting pi-autoresearch to a pure Claude Code plugin (skill + slash command + UserPromptSubmit hook, no MCP server). Vendored under `domain-skills/claude/autoresearch/`, MIT licensed. The port itself adapts [davebcn87/pi-autoresearch](https://github.com/davebcn87/pi-autoresearch), which generalizes [Andrej Karpathy's `autoresearch`](https://github.com/karpathy/autoresearch) from ML training to any optimization target.
 - **Geoff Huntley ([@ghuntley](https://ghuntley.com))** — the "Ralph Wiggum" loop, the 170k-token resource framing, and the discipline of minimizing context window usage. This kit's compaction patterns trace back to his work.
 - **Sean Grove** — the "specs are the new code" framing that underpins why `/research` and `/plan` produce persistent, reviewable artifacts.
 - **[Pierre Computer Company](https://pierre.computer)** (Jon Crosby, [Nicolas Gallagher](https://nicolasgallagher.com/), team) — for `/first-principles`. The originating reference for the skill: their unbundling of git collaboration into atomic primitives (code.storage, diffs.com, trees.software, diffshub.com) after sunsetting pierre.co is the canonical recent example of "name the lazy bias, decompose, rebuild one primitive with craft." See [pierre.computer](https://pierre.computer).
