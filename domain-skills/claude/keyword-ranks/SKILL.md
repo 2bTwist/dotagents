@@ -43,7 +43,7 @@ Response: JSON with `resultCount` and `results: [{ trackId, trackName, ... }, ..
 
 ## Setup
 
-1. **Ensure the script exists.** If `scripts/aso/keyword-ranks.py` (or equivalent project location) is missing, create it. Use the template at the bottom of this file.
+1. **Ensure the script exists.** If `scripts/aso/keyword-ranks.py` (or equivalent project location) is missing, create it by copying the sibling [`keyword-ranks.py`](keyword-ranks.py).
 2. **Collect inputs:**
    - **App ID** — Apple's numeric trackId. Find in App Store URL: `https://apps.apple.com/<cc>/app/<name>/id<APPID>`.
    - **Country code(s)** — lowercase ISO 3166: `us`, `gb`, `de`, `fr`, `ca`, `au`, etc.
@@ -86,77 +86,6 @@ Template row format:
 - **Rank ≠ what users see.** Apple's search results are personalized (locale, prior installs, A/B tests). The script gives the unauthenticated baseline — close to what a clean device would see, but not identical to any individual user's experience.
 - **Don't use this for ad hoc curiosity.** Each invocation is a real measurement. Document it. Otherwise you'll forget what was measured when.
 
-## Python script template
-
-If `scripts/aso/keyword-ranks.py` doesn't exist, write this:
-
-```python
-#!/usr/bin/env python3
-"""
-keyword-ranks.py — Pull App Store keyword ranks via Apple's public iTunes
-Search API. No auth required. Output is a Markdown table.
-
-Defaults are set for BeSeen; override via flags for any other app.
-"""
-
-import argparse, json, sys, time, urllib.parse, urllib.request
-from datetime import date
-
-ITUNES_SEARCH_URL = "https://itunes.apple.com/search"
-USER_AGENT = "Mozilla/5.0 (keyword-ranks/1.0)"
-
-def fetch_search(term: str, country: str, limit: int = 200) -> dict:
-    params = {
-        "term": term,
-        "country": country,
-        "entity": "software",
-        "limit": str(limit),
-    }
-    url = f"{ITUNES_SEARCH_URL}?{urllib.parse.urlencode(params)}"
-    req = urllib.request.Request(url, headers={"User-Agent": USER_AGENT})
-    with urllib.request.urlopen(req, timeout=15) as r:
-        return json.loads(r.read().decode("utf-8"))
-
-def find_rank(payload: dict, app_id: str) -> int | None:
-    for i, app in enumerate(payload.get("results", []), 1):
-        if str(app.get("trackId")) == str(app_id):
-            return i
-    return None
-
-def main() -> int:
-    p = argparse.ArgumentParser(description=__doc__)
-    p.add_argument("--app-id", default="6760330166", help="Apple numeric trackId")
-    p.add_argument("--country", default="us", help="lowercase ISO country code")
-    p.add_argument("--keywords",
-        default="couple mood journal,couple mood,partner mood,couple journal,mood journal couples,body map,check in,reflect,honest,resilience",
-        help="comma-separated keyword list")
-    p.add_argument("--limit", type=int, default=200, help="results per keyword (max ~200)")
-    p.add_argument("--delay", type=float, default=0.3, help="seconds between requests")
-    args = p.parse_args()
-
-    keywords = [k.strip() for k in args.keywords.split(",") if k.strip()]
-    print(f"# Rank snapshot — app {args.app_id} — {args.country.upper()} — {date.today().isoformat()}")
-    print()
-    print("| Keyword | Rank | / Total |")
-    print("| --- | ---: | ---: |")
-    for kw in keywords:
-        try:
-            data = fetch_search(kw, args.country, args.limit)
-            total = data.get("resultCount", len(data.get("results", [])))
-            rank = find_rank(data, args.app_id)
-            rank_str = "—" if rank is None else str(rank)
-            print(f"| {kw} | {rank_str} | {total} |")
-        except Exception as e:
-            print(f"| {kw} | ERROR | {e} |", file=sys.stderr)
-        time.sleep(args.delay)
-    return 0
-
-if __name__ == "__main__":
-    sys.exit(main())
-```
-
 ## Origin
 
-This skill was extracted from a May 2026 session reverse-engineering Astro (the indie ASO Mac app by Matteo Spada). Discovery: Astro's `POST /v1/popularity` and `GET /v1/catalog/us/search?term=...` are the only two endpoints that drive its rank-tracking UI. The catalog/search endpoint is just a wrapper around Apple's iTunes Search API. Hence the entire rank-tracking feature can be replicated in ~50 lines of Python with zero auth.
-
-What stopped the broader RE: Astro signs every request with HMAC-SHA256 using a runtime-derived key (not in the binary as a static string), and pins TLS for several AWS endpoints. So fully replaying Astro's `/v1/popularity` would require Frida/LLDB hooks to extract the key. Out of scope here — popularity belongs in Apple Search Ads API or the Astro UI for now.
+Extracted from a May 2026 session reverse-engineering Astro (the indie ASO Mac app by Matteo Spada). Astro's rank-tracking UI is driven by just two endpoints — `POST /v1/popularity` and `GET /v1/catalog/us/search?term=...` — and the catalog/search one is a thin wrapper around Apple's iTunes Search API, so the whole rank-tracking feature replicates in ~50 lines of Python with zero auth. Popularity is the part that stays out of reach here: Astro signs every request with HMAC-SHA256 from a runtime-derived key (not a static string in the binary) and pins TLS, so replaying `/v1/popularity` would need Frida/LLDB hooks to extract the key. Popularity belongs in the Apple Search Ads API or the Astro UI for now.
