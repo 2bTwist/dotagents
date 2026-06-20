@@ -6,17 +6,6 @@ Detailed protocols for steps 1, 2a, 2c, and 3 of [SKILL.md](SKILL.md). These are
 
 Step 1 inference vocabulary. The user is not required to know the canonical name for what they want. Map the fuzzy description to a canonical topic name before research starts.
 
-**Check locally installed skills FIRST** (before any network call). They are already vetted for this stack, and a locally-present skill is the strongest signal the problem is solved here. Enumerate every skill source, then read the `description:` frontmatter of each candidate to match against the task class:
-
-```
-# every install location, including ones not surfaced to the current agent
-ls ~/.claude/skills .claude/skills .agents/skills 2>/dev/null
-# read frontmatter descriptions to match by topic
-for f in .agents/skills/*/SKILL.md ~/.claude/skills/*/SKILL.md; do echo "== $f"; sed -n '1,8p' "$f"; done
-```
-
-Note: `.agents/skills/` (and the `skills-lock.json` beside it) is the full local library — it includes skills NOT symlinked into `.claude/skills/`, so they never load into agent context but are still readable and citable. Match a local skill, read its `SKILL.md` with the Read tool, cite it by path. Only AFTER exhausting local matches, crawl published skills.
-
 List published skill names. Skill repo directory names are the cleanest source of canonical topic labels:
 
 ```

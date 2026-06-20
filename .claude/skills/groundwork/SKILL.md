@@ -52,7 +52,7 @@ Identify scenario: (a) existing repo, new task class; (b) brand new project; (c)
 
 ### 2. Find canonical guidance
 
-**2a — Skill collections. Locally installed skills FIRST.** Before any web crawl, enumerate the skills already installed on this machine/repo and match by description — a locally-installed skill is pre-vetted for this stack and costs no network. Then reuse the step 1 list for web-published skills. Enumeration + matching: see [REFERENCE.md](REFERENCE.md#skill-crawl-protocol). For each match (local or remote), fetch/read the SKILL.md and capture: name, path/URL, load-bearing principles (verbatim quotes). Vetting criteria: see [REFERENCE.md](REFERENCE.md#skill-vetting). When the plan cites a locally-installed skill, name it so `/implement` knows to invoke it.
+**2a — Skill collections.** Reuse the step 1 list. Fetch matching SKILL.md files raw. Capture: name, URL, load-bearing principles (verbatim quotes). Vetting criteria: see [REFERENCE.md](REFERENCE.md#skill-vetting).
 
 **2b — Library/vendor docs.** If the topic maps to a library/SDK/framework, prefer `context7` MCP (`resolve-library-id` → `query-docs`) — bypasses search noise and stale training data. Otherwise WebSearch "<task class> best practices <year>" and WebFetch top 2-4 high-signal results. Verbatim quotes.
 
