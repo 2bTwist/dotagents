@@ -64,6 +64,9 @@ RESOLVED (2026-06-17, session 2):
 - **aso-audit:** cleaned LOCAL ONLY (179 → 175): killed 5 dead sibling-skill refs + Appeeky sediment + expert preamble; framework kept inline. **Not pushed to dotclaude** (user: project-specific + hacky, stays local). dotclaude copies (claude+pi, 179l) are now intentionally stale.
 - **.agents/.pi propagation:** deferred (user: dotclaude only for now).
 
+RESOLVED (2026-06-22, session 3):
+- **ASO + keyword-ranks scoped to the BeSeen project.** `aso-audit`, `aso-and-apple-ads`, and `keyword-ranks` are app-specific; they now live in `~/Projects/BeSeen/.claude/skills/` (local/gitignored per BeSeen convention) and were deleted from all global dirs (`~/.claude`, `~/.agents`, `~/.pi/agent`). Removed the stale `domain-skills/claude/{aso-audit,keyword-ranks}` and `domain-skills/pi/aso-audit` copies from this repo so `install.sh --with-domain-skills` can't re-add them globally. (aso-and-apple-ads was never tracked here.)
+- **De-bloated the Pi system prompt.** Pi auto-loads `~/.pi/agent/skills` + `~/.agents/skills`. Moved the BeSeen Expo/RN skills (deploy, submit, migrate, building-native-ui, react-native-best-practices) out of `~/.agents/skills` (they already live in BeSeen), and emptied `~/.agents/skills` of the project-agnostic workflow set (kept in `~/.claude/skills` + this repo). Pi system prompt: ~5074 → ~1841 tokens, 18 → 4 skills.
+
 STILL OPEN:
 1. **User commits the dotclaude working tree** (locked decision #2; NO Claude co-author trailer).
-2. The stale dotclaude `aso-audit` copies (179l, claude+pi) — since aso-audit is now local-only, decide whether to delete them from dotclaude. Destructive; left for the user.
