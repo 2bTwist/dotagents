@@ -60,6 +60,7 @@ After install, start a fresh agent session. Slash commands appear automatically.
 | `/implement` | Execute a plan phase by phase. Ticks automated checkboxes. Pauses for manual verification between phases. Stops on mismatch. | inherit |
 | `/compact` | Mid-session intentional compaction. Writes state to `specs/handoffs/` for clean session restart. | inherit |
 | `/oneshot` | Escape hatch for small tasks (rename, color change, one-line fix). Skip full RPI with hard guardrails against scope creep. | inherit |
+| `/rigor` | Gate an investigation, benchmark, or claim behind grounded engineering method, then refute it. Locks a pre-registration (goal, competing hypotheses + falsifiers, the one variable, metric + what's-not-measured, run-count) BEFORE work, runs an adversarial refutation pass in a forked sub-agent after, and writes a two-phase doc to `specs/rigor/YYYY-MM-DD-<slug>.md`. Core procedures inline; full framework reference ([FRAMEWORKS.md](.claude/skills/rigor/FRAMEWORKS.md), 20 cited procedures across empirical/epistemic branches) disclosed on demand. User-invoked. Grounded in [`specs/research/2026-06-21-rigor-skill.md`](specs/research/2026-06-21-rigor-skill.md). | `opus` |
 
 **Sub-agents** (`.claude/agents/`):
 
