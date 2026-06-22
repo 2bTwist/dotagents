@@ -1,0 +1,21 @@
+{
+  "url": "http://localhost:3000/",
+  "measurement": {
+    "runs": 5,
+    "cpuThrottle": 4,
+    "network": "Fast4G",
+    "build": "production",
+    "note": "Single source of truth for every gate. The loop CANNOT edit this file (grilled decision 4)."
+  },
+  "metrics": {
+    "lcp":      { "budget": null, "target": 1000, "unit": "ms",    "layer": "page-load" },
+    "cls":      { "budget": null, "target": 0.05, "unit": "score", "layer": "page-load" },
+    "tbt":      { "budget": null, "target": 150,  "unit": "ms",    "layer": "page-load" },
+    "inp":      { "budget": null, "target": 100,  "unit": "ms",    "layer": "interaction" },
+    "bundleKB": { "budget": null, "target": 170,  "unit": "kB",    "layer": "bundle" }
+  },
+  "_legend": {
+    "budget": "current enforced gate. null = not yet calibrated; run `pnpm perf:calibrate`. Measure-then-ratchet (decision 10).",
+    "target": "the 'excellent' floor for this layer, the goal to ratchet toward. Per-layer physics floor (decision 3)."
+  }
+}
