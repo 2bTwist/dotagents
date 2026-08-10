@@ -1,6 +1,8 @@
 ---
 name: perf-harness-init
 description: Scaffold the full performance harness into any React/web project (Next.js, Vite-React, or plain web). Installs the measurement engines, copies the configs + the perf-check verifier CLI from this skill's templates, sets telemetry-off, wires CI, and calibrates budgets. Invoke in a fresh repo to make it perf-gated. Triggers "set up the perf harness", "add perf gating to this project", "init perf harness".
+harness:
+  degrades: [mcp-browser]
 ---
 
 # perf-harness-init

@@ -2,6 +2,8 @@
 name: research
 description: Map how an area works TODAY (codebase or external/web) — spawn parallel sub-agents, synthesize into specs/research/YYYY-MM-DD-<slug>.md.
 model: opus
+harness:
+  degrades: [subagents]
 ---
 
 # Research

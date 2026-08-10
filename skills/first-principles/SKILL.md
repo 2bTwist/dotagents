@@ -2,6 +2,8 @@
 name: first-principles
 description: Produce a first-principles re-framing of a substantial task, decision, or product surface before /plan. The agent identifies the conventional incumbent approach, questions whether its core assumptions still hold, decomposes the problem into atomic primitives, and proposes the embarrassingly-good rebuild of the primitive most worth rethinking. Writes a 7-section analysis to specs/first-principles/YYYY-MM-DD-<slug>.md. Suggest invoking when about to start a substantial new feature surface, architectural decision, or product direction with an obvious incumbent approach to copy. Skip for /oneshot territory, bug fixes, pure mapping (/research), or work that already has prior art in this repo.
 model: opus
+harness:
+  degrades: [subagents]
 ---
 
 # First-Principles Re-framing

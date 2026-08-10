@@ -3,3 +3,8 @@
 *.swo
 .idea/
 .vscode/
+
+# Local test-freeze unlock sentinel. Must never be committed: a committed
+# unlock silently disables the freeze for everyone who clones.
+.claude/tests-unlocked
+

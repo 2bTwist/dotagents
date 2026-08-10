@@ -1,6 +1,8 @@
 ---
 name: perf-loop
 description: Diff-driven autonomous browser test + performance optimization loop for serious React/web implementation. Invoke deliberately (alongside /implement) when a design is settled and you want a change driven to an EXCELLENT bar — not while prototyping. It reads the git diff, generates targeted end-to-end user flows for what changed, drives them in a real browser, detects perf hitches + weird behavior, fixes them, and re-runs until budgets pass — stopping only at the budget or a severe tradeoff it escalates. Triggers "run the perf loop", "optimize until excellent", "perf-loop this", "test this PR in the browser".
+harness:
+  degrades: [subagents, mcp-browser]
 ---
 
 # perf-loop

@@ -2,6 +2,8 @@
 name: plan
 description: Create a decision-complete, phased implementation plan after grounding in the code, then write it to specs/plans/YYYY-MM-DD-<slug>.md.
 model: opus
+harness:
+  degrades: [subagents]
 ---
 
 # Plan

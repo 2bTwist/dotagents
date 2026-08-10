@@ -3,6 +3,8 @@ name: rigor
 description: Gate an investigation, benchmark, or claim behind grounded engineering method, then refute it. User-invoked.
 disable-model-invocation: true
 model: opus
+harness:
+  requires: [subagents]
 ---
 
 # Rigor

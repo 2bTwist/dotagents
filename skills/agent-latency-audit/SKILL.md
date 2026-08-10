@@ -1,6 +1,8 @@
 ---
 name: agent-latency-audit
 description: Measure where an agent session's wall-clock actually goes, then fix the parts that matter. Parses Claude Code session transcripts to attribute time across inference, tool execution, approval waits, and external processes. Use when the user says the agent "feels slow", asks what's causing latency/bottlenecks, wants tool calls "in ms", or wants to optimize how the agent operates. Topic- and project-agnostic.
+harness:
+  requires: [claude-transcripts]
 ---
 
 # Agent Latency Audit
