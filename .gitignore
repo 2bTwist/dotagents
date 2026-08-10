@@ -8,3 +8,7 @@
 # unlock silently disables the freeze for everyone who clones.
 .claude/tests-unlocked
 
+# Machine-specific instruction references. instructions/core.md refers to these
+# by role, never by path, so the shared document stays publishable and the
+# specifics stay on the machine. See instructions/references/README.md.
+instructions/references/*.local.md
