@@ -1,0 +1,6 @@
+name: autoresearch
+requires: hooks slash-commands
+summary: Autonomous experiment loop. Needs a UserPromptSubmit hook to sustain the
+  loop across turns and a slash command to start it, so it can only run on a
+  harness that has both. Everywhere else it is declined by name rather than
+  installed as a skill whose loop would never fire.
