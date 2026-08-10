@@ -1,7 +1,9 @@
 ---
 name: implement
-description: Execute an approved plan from specs/plans/ one phase at a time, ticking checkboxes and pausing for manual verification between phases.
+description: Execute an approved plan from specs/plans/ phase by phase, dispatching a phase's independent parts in parallel, ticking checkboxes and pausing for manual verification between phases.
 disable-model-invocation: true
+harness:
+  degrades: [subagents]
 ---
 
 # Implement
@@ -21,10 +23,11 @@ Given a plan path (ask for one if absent):
 
 ## Per phase
 
-1. Implement the whole phase. If the plan's References name an installed skill for this phase's task class, **invoke it** rather than reinventing the approach.
-2. Run the phase's automated success criteria (the plan specifies the exact commands). Fix every failure before moving on.
-3. Check off completed items in the plan file (Edit) and in your todos.
-4. **Pause for manual verification** — tell the human the phase is ready:
+1. **Split the phase, or decide not to.** Most phases are one coherent change: build it yourself. When a phase holds parts that touch disjoint file sets and do not depend on each other, dispatch them concurrently. A long serial build is what needs justifying, not the parallelism. A numbered phase list is a decomposition, not a schedule. Mechanics, including the dispatch record and the integration gate: [`DISPATCH.md`](DISPATCH.md).
+2. Implement the parts you kept. If the plan's References name an installed skill for this phase's task class, **invoke it** rather than reinventing the approach.
+3. Run the phase's automated success criteria (the plan specifies the exact commands). Fix every failure before moving on.
+4. Check off completed items in the plan file (Edit) and in your todos.
+5. **Pause for manual verification** — tell the human the phase is ready:
    ```
    Phase [N] Complete — Ready for Manual Verification
    Automated checks passed: [list]
@@ -37,4 +40,4 @@ Given a plan path (ask for one if absent):
 
 STOP — the codebase may have evolved since the plan was written. Present it plainly — **Expected** (plan) / **Found** (reality) / **Why it matters** — and ask how to proceed. Don't paper over it.
 
-Done when every phase's automated criteria pass and its manual items are user-confirmed.
+Done when every phase's automated criteria pass, its manual items are user-confirmed, and nothing reached the user that you did not verify yourself.
