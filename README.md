@@ -31,12 +31,19 @@ each harness afterwards.
 | `--list` | Print what would install where, and what is skipped and why. Writes nothing. |
 | `--dry-run` | Run the full install path, write nothing. |
 | `--force` | Overwrite files that already exist. Without it, existing files are left alone. |
-| `--symlink` | Link instead of copy, so repo edits apply live. Frontmatter is not rewritten in this mode. |
+| `--symlink` | Link skills instead of copying them, so repo edits apply live. Agents are still written out, and frontmatter is not rewritten. |
 | `--with-optional` | Also install `optional/` packages. |
 
-`--symlink` and frontmatter stripping are mutually exclusive by design. A symlink points at the repo
-file, so repo-only keys such as `harness:` stay visible to the harness. Use copy mode if that
-matters, symlink mode if live editing matters more.
+Live editing covers skills, not agents. An agent is written out on every target because every target
+needs a different rendering of it: Claude Code gets markdown, Codex gets generated TOML, and Pi and
+the generic target get a copy demoted to a skill. None of those can be a link to the source, so an
+edit to `agents/*.md` takes effect on the next install rather than immediately. The autoresearch hook
+is copied for a different reason: its absolute path is written into `settings.json`, and a link would
+break silently the moment the checkout moved.
+
+Symlink mode also skips frontmatter rewriting, since the harness reads the repo file directly.
+Repo-only keys such as `harness:` stay visible to it. Use copy mode if that matters, symlink mode if
+live editing matters more.
 
 ## Targets
 
