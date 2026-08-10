@@ -194,4 +194,5 @@ Optimize for fewer round trips.
 
 - **If a component cannot be tested in isolation,** treat that as design feedback.
 - **Always follow YAGNI.** Build what the current task requires, not speculative features, config, or abstractions.
-- **Use every library the way its maintainers do.** Idiomatic, not generic. Read the docs first when the library is unfamiliar, when you have only seen the API secondhand, or when your instinct is to hand-roll something it likely ships. Read them over recalled knowledge. Done when you can name the documented pattern you followed.
+- **Use every library the way its maintainers do.** Idiomatic, not generic. Read the docs first when the library is unfamiliar, when you have only seen the API secondhand, or when your instinct is to hand-roll something it likely ships. Done when you can name the documented pattern you followed.
+- **The installed version is the spec, not the one you learned.** Before writing against any library or tool, read what it ships: its docs, README, or type signatures. Heed deprecation notices. Done when you can name the installed version you read against.
