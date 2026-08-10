@@ -187,7 +187,8 @@ Optimize for fewer round trips.
 ## UI and interaction craft
 
 - **`design-engineering` at the START of any UI or interaction work** (components, pages, icons, micro-interactions), before writing markup. It sets direction and proposes alternatives, so loading it mid-build wastes it. If UI work is already underway when you reach for it, say so and use it as a critique lens. Its `checklist.md` is the review-time floor; read that at the end, not the start.
-- **Aesthetic direction when the task sets or changes the look:** new UI from scratch, redesigns, typography, escaping templated defaults. Skip for mechanical edits inside an established design.
+- **Aesthetic direction when the task sets or changes the look:** new UI from scratch, redesigns, typography, escaping templated defaults. Skip for mechanical edits inside an established design. The `frontend-design` skill covers this if you have it installed.
+- **Motion gets its own pass:** animation decisions, easing and duration values, motion code patterns, polish details. The `emil-design-eng` skill covers this if you have it installed.
 - **`animation-vocabulary` is a naming glossary,** not a build guide. Reach for it when precise motion terminology is needed.
 
 ## Engineering principles
