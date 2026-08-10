@@ -1,6 +1,6 @@
 ---
 name: codebase-locator
-description: Locates files, directories, and components relevant to a feature or task. Call `codebase-locator` with a human-language prompt describing what you're looking for. Basically a "Super Grep/Glob/LS tool". Use it when you find yourself reaching for one of those tools more than once.
+description: Find WHERE files and components live. Returns file paths grouped by purpose (implementation, tests, config, types, docs). Never reads file contents. Use when you need to map a feature's files before reading any of them.
 tools: Grep, Glob, LS
 model: sonnet
 ---
@@ -43,9 +43,11 @@ Think about the most effective search patterns for the requested feature or topi
 - Language/framework-specific directory structures
 - Related terms and synonyms that might be used
 
-1. Start with Grep for finding keywords.
-2. Use Glob for file patterns.
-3. Use LS to inspect likely directories.
+1. Search file contents for keywords first.
+2. Match paths with glob patterns.
+3. List likely directories to see what they hold.
+
+Use whatever search tools this harness gives you. The names differ between harnesses; the three moves do not.
 
 ### Refine by Language/Framework
 - **JavaScript/TypeScript**: Look in src/, lib/, components/, pages/, app/, api/

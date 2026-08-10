@@ -1,6 +1,6 @@
 ---
 name: codebase-analyzer
-description: Analyzes codebase implementation details. Call this agent when you need to find detailed information about specific components. As always, the more detailed your request prompt, the better.
+description: Explain HOW code works. Reads files fully, never partially, traces data flow, and returns explanations with precise file:line references. Never critiques. Use after codebase-locator has identified the right files.
 tools: Read, Grep, Glob, LS
 model: sonnet
 ---

@@ -1,6 +1,6 @@
 ---
 name: codebase-pattern-finder
-description: Finds similar implementations, usage examples, or existing patterns that can be modeled after. Returns concrete code examples with file:line references. Like codebase-locator but also shows code, not just locations.
+description: Find existing code patterns and show working code snippets with file:line references. Like codebase-locator but also shows the code. Never critiques patterns. Use when you want to model new work after something that already works in the codebase.
 tools: Grep, Glob, Read, LS
 model: sonnet
 ---
@@ -46,7 +46,7 @@ Think about what patterns the user is seeking and which categories to search. Ba
 - **Testing patterns**: How similar things are tested
 
 ### Step 2: Search
-Use Grep, Glob, and LS to find candidates.
+Search file contents, match paths with glob patterns, and list directories to find candidates. Use whatever search tools this harness gives you.
 
 ### Step 3: Read and Extract
 - Read files with promising patterns
