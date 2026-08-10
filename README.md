@@ -51,8 +51,8 @@ live editing matters more.
 |---|---|---|---|
 | `claude` | `~/.claude` | Native, markdown with frontmatter | nothing |
 | `codex` | `~/.codex` | Native, translated to TOML | `agent-latency-audit`, `autoresearch` |
-| `pi` | `~/.pi/agent` | No sub-agent concept, demoted to user-invoked skills | `agent-latency-audit`, `rigor`, `autoresearch` |
-| `agents` | wherever `--dest` points | Assumed absent, demoted to skills | `agent-latency-audit`, `rigor`, `autoresearch` |
+| `pi` | `~/.pi/agent` | No sub-agent concept, demoted to user-invoked skills | `agent-latency-audit`, `rigor`, `crew`, `autoresearch` |
+| `agents` | wherever `--dest` points | Assumed absent, demoted to skills | `agent-latency-audit`, `rigor`, `crew`, `autoresearch` |
 
 Nothing in that last column is a bug or a gap to fill later. Each entry is a skill whose core
 mechanism the harness cannot provide, declined by name rather than installed as something that would
@@ -73,6 +73,7 @@ the second was emptied on purpose to keep Pi's system prompt small.
 | `plan` | Turn a task into a decision-complete phased plan with per-phase verification. |
 | `implement` | Execute a plan one phase at a time, pausing for manual verification between phases. |
 | `oneshot` | Escape hatch for small contained tasks, with guardrails against scope creep. |
+| `crew` | Run the session as a first mate: split work by blast radius, dispatch the parts in parallel, supervise, then verify every result yourself before relaying it. |
 | `compact` | Mid-session compaction to a handoff file, so work resumes in a fresh session with nothing lost. |
 | `rigor` | Gate an investigation or benchmark behind grounded method, then try to refute it. |
 | `agent-latency-audit` | Attribute an agent session's wall-clock time across inference, tool execution, approval waits, and external processes. |
