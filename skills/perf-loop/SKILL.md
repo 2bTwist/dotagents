@@ -41,7 +41,7 @@ uses the agent + Playwright + the `mcp__MCP_DOCKER__browser_*` tools + our
 
 ### 4. Diagnose → fix → re-verify
 - Pick the worst metric/anomaly. Read the CPU profile (`perf-results/*.cpuprofile`) / console / network to find the cause.
-- Apply ONE focused fix (code-split, defer/lazy, debounce, reduce DOM/paint, image/font, a memo the compiler can't infer). Commit on success; rollback on failure (gnhf pattern).
+- Apply ONE focused fix (code-split, defer/lazy, debounce, reduce DOM/paint, image/font, a memo the compiler can't infer). Work on a dedicated branch or worktree and commit each proven improvement. On failure restore only the scoped experimental diff; never `reset` or `clean` the user's working tree.
 - Re-run invariants; if a fix breaks one, revert it and try another approach. Loop.
 
 ## Stop / escalate

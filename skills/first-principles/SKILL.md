@@ -40,6 +40,8 @@ Spawn three sub-agents via the Task tool, all at once:
 - **Recent-shifts analyst.** Task: *"For `<topic>`, identify what has shifted recently in the field that may invalidate the conventional assumptions. Critiques, replacements, new constraints, audience shifts, new affordances, recent failure modes. Return: 2-3 specific shifts with source URLs, dated. Skip lazy 'AI changes everything' takes — name concrete shifts."* Tools: WebSearch, WebFetch.
 - **Repo decomposer.** Task: *"Map how `<topic>` appears in this repo. Identify atomic primitives (separate, separately-shippable units), dependencies between them, and any current implementation. Return: primitive list with file paths and line ranges, dependency notes."* Tools: Read, Grep, Glob, LS.
 
+Verify every load-bearing sub-agent claim against its cited source before using it. Same-model sub-agents improve context separation; they do not produce independent evidence.
+
 While sub-agents run, read `~/.claude/skills/first-principles/CANON.md` to load anchor examples. Scan `MEMORY.md` (in the project's auto-memory directory) if it exists, for standing constraints relevant to the topic.
 
 ### 3. Synthesize and write the analysis
@@ -53,7 +55,7 @@ Output a 3-line chat summary:
 2. The named lazy bias and the proposed rebuild's primitive (or "no reframe" if negative result).
 3. The hand-off line from the doc.
 
-Do not auto-invoke `/plan` or `/grill-me`. Stop and wait.
+Do not auto-invoke `/plan` or start a stress-test pass. Stop and wait.
 
 ## When invoked on the wrong task
 

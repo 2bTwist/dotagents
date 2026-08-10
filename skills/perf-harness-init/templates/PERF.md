@@ -55,6 +55,8 @@ Until you calibrate, `budgets.json` budgets are `null` and gates only warn.
 | `pnpm analyze` | bundle | visual bundle treemap |
 | `pnpm perf` | all | the whole suite in one shot |
 
+The `perf` script must build, run `e2e:perf`, start the production server, then invoke `perf:check`. Use `start-server-and-test` or the repo's existing server orchestration so the verifier never reads a dead URL or a stale result from a previous run. A stale `perf-results/` read is a green verdict that measured nothing.
+
 ## Inspecting the CPU profile
 `pnpm e2e:perf` writes `perf-results/homepage.cpuprofile`. Open Chrome DevTools →
 Performance → load that file to see the flame chart (function-level, the deepest

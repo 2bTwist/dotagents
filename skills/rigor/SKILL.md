@@ -19,7 +19,7 @@ Execute steps immediately. Do not announce. The gate (Step 2) is a hard stop, do
 
 1. **No locked pre-registration, no execution.** Step 2 fully filled and locked is the gate. If you catch yourself measuring or concluding before Pass 1 exists, stop, that is the exact failure this skill prevents.
 2. **Pass 1 is immutable once work starts.** A wrong hypothesis is recorded as wrong in Pass 2, never edited away in Pass 1. The lock is what makes a solo result trustworthy.
-3. **The adversary is not optional and not you.** It runs in a forked Task sub-agent prompted to refute, your own "it holds up" is author bias, weak evidence.
+3. **The adversary is not optional and not you.** It runs in a forked Task sub-agent prompted to refute, your own "it holds up" is author bias, weak evidence. A same-model sub-agent buys context separation, not true independence, so ground its challenges in the raw artifacts and external specs rather than in its own reasoning.
 4. **Every "established" claim carries a source.** No source means it is at most "inferred." Downgrade or go find it.
 5. **Grounded, not exhaustive.** Apply the core procedures; reach into [`FRAMEWORKS.md`](FRAMEWORKS.md) only for the branch in play.
 

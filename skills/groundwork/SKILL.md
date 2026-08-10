@@ -1,7 +1,7 @@
 ---
 name: groundwork
 description: |
-  Lay the foundation before acting. Fetches canonical guidance, finds 2-3 reference implementations, compares to the current repo, and produces a phased cleanup plan that hands off to /grill-me and /implement. Topic-agnostic.
+  Lay the foundation before acting. Fetches canonical guidance, finds 2-3 reference implementations, compares to the current repo, and produces a phased cleanup plan that hands off for stress-testing and then to /implement. Topic-agnostic.
 
   TRIGGER: brand-new project, first instance of a task class in a repo, audit/cleanup of an accreted area, "how should I set this up" / "what's the right way to do X", or any architecture decision before code exists.
   SKIP: quick fixes (/oneshot), pure debugging or mapping (/research), or explicit "just do it" / "skip the research".
@@ -10,7 +10,7 @@ model: opus
 
 # Groundwork
 
-Produce a phased cleanup plan for any task class. Output is implementation-ready, citation-backed, and hands off to `/grill-me` and `/implement`. Topic-agnostic — no hardcoded stack, framework, or author.
+Produce a phased cleanup plan for any task class. Output is implementation-ready, citation-backed, and hands off to a stress-test pass and then `/implement`. Topic-agnostic — no hardcoded stack, framework, or author.
 
 ## Execution
 
@@ -25,7 +25,7 @@ Execute steps immediately. Do not announce. Pause only where a step says to.
 5. **Good existing patterns beat external canonical.** Document what matches and leave it alone. Do not ratify the status quo. Do not propose blanket migration.
 6. **Output is a phased cleanup plan.** At least one phase with file paths, ordered steps, and verification. Description-only output is a failed run.
 7. **Implementation-ready.** Explicit file paths, ordered steps, code snippets where they reduce ambiguity, automated verification.
-8. **Do not invoke /grill-me automatically.** End with the hand-off line and stop.
+8. **Do not start the stress-test pass automatically.** End with the hand-off line and stop.
 9. **Scope to the task.** 2-3 converging signals beat 8 weak ones.
 
 ## Argument
@@ -52,7 +52,7 @@ Identify scenario: (a) existing repo, new task class; (b) brand new project; (c)
 
 ### 2. Find canonical guidance
 
-**2a — Skill collections.** Reuse the step 1 list. Fetch matching SKILL.md files raw. Capture: name, URL, load-bearing principles (verbatim quotes). Vetting criteria: see [REFERENCE.md](REFERENCE.md#skill-vetting).
+**2a — Skill collections. Locally installed skills FIRST.** Before any web crawl, enumerate the skills already installed on this machine/repo and match by description — a locally-installed skill is pre-vetted for this stack and costs no network. Then reuse the step 1 list for web-published skills. Enumeration + matching: see [REFERENCE.md](REFERENCE.md#skill-crawl-protocol). For each match (local or remote), fetch/read the SKILL.md and capture: name, path/URL, load-bearing principles (verbatim quotes). Vetting criteria: see [REFERENCE.md](REFERENCE.md#skill-vetting). When the plan cites a locally-installed skill, name it so `/implement` knows to invoke it.
 
 **2b — Library/vendor docs.** If the topic maps to a library/SDK/framework, prefer `context7` MCP (`resolve-library-id` → `query-docs`) — bypasses search noise and stale training data. Otherwise WebSearch "<task class> best practices <year>" and WebFetch top 2-4 high-signal results. Verbatim quotes.
 
@@ -86,7 +86,7 @@ After writing, output a brief chat summary: plan path, phase count and titles, f
 
 End the chat summary with:
 
-> Run `/grill-me` against this plan to stress-test the tradeoffs. Then `/implement specs/plans/<file>` to execute Phase 1.
+> Stress-test this plan's tradeoffs before building (the `grill-me` skill if installed). Then `/implement specs/plans/<file>` to execute Phase 1.
 
 Stop. Do not invoke other commands.
 

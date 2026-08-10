@@ -66,5 +66,5 @@ For each of 2-4 sources (combine 2a skills + 2b search results + 2c papers if ap
 Things a reader might expect but that are not in this plan, with one-line reasons.
 
 ## Hand-off
-Run `/grill-me` against this plan to stress-test the tradeoffs.
+Stress-test this plan's tradeoffs before building (the `grill-me` skill if installed).
 Then `/implement specs/plans/YYYY-MM-DD-groundwork-<slug>.md` to execute Phase 1.

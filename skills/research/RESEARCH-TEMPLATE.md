@@ -55,3 +55,34 @@ last_updated: <YYYY-MM-DD>
 ## Open Questions
 <Areas needing further investigation.>
 ```
+
+## Web variant (external research)
+
+Same metadata block (omit `git_commit`/`branch`/`repository` when not repo-bound; tag `[research, web, ...]`). Structure:
+
+```markdown
+# Research: <Question/Topic>
+
+## Research Question
+<Original user query.>
+
+## Summary
+<The answer. Load-bearing claims labeled [established]/[inferred]/[speculated].>
+
+## Detailed Findings
+
+### [Sub-question/Area]
+- Finding, with label and source URL
+- Methodology caveat in one clause where a number appears
+
+## Sources
+| Source | Publisher/Origin | Date | Tier | Cite-checked |
+|---|---|---|---|---|
+| <URL> | <who, and the true origin if syndicated> | <date> | primary/secondary/search-ranked | yes/no/n-a |
+
+## Not Found / Unverified
+<What was searched for and not found; claims left [inferred] and why.>
+
+## Open Questions
+<Including anything recommended for /rigor escalation.>
+```

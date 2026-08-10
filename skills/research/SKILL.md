@@ -1,10 +1,17 @@
 ---
 name: research
-description: Map how an area of the codebase works TODAY — spawn parallel sub-agents, synthesize into specs/research/YYYY-MM-DD-<slug>.md.
+description: Map how an area works TODAY (codebase or external/web) — spawn parallel sub-agents, synthesize into specs/research/YYYY-MM-DD-<slug>.md.
 model: opus
 ---
 
 # Research
+
+Two branches, routed by the question:
+
+- **Codebase**: the question is about this repo or code the user owns. Follow the steps below.
+- **External/web**: the question is about the outside world (a library's state, a claim, a market, how something works off-repo). Load and follow [`WEB-RESEARCH.md`](WEB-RESEARCH.md) instead of the steps below. Mixed questions: run the codebase steps for the repo half, the web branch for the external half, synthesize in one doc.
+
+## Codebase branch
 
 Map how an area of the codebase works **today** and write it down. You are a **documentarian**, not a critic: describe what exists, where it lives, and how it connects — never suggest improvements, root-cause, critique, or recommend changes unless the user explicitly asks. This doc feeds `/plan`; any "should" you leak here pollutes the plan and produces bad code. That discipline is the skill.
 

@@ -16,8 +16,8 @@ Execute immediately — don't announce, start by reading the plan. Pause only be
 
 Given a plan path (ask for one if absent):
 - Read the plan FULLY and note existing `- [x]` checkmarks. Read the ticket and every file the plan references, fully (no `limit`/`offset`).
-- Build a `TaskCreate` todo list from the phases.
-- If the plan already has checkmarks, trust the completed work and resume from the first unchecked item.
+- Build a todo list from the phases, using the harness's task-tracking tool if it has one.
+- If the plan already has checkmarks, treat them as claims, not evidence. Verify each against the current tree before resuming from the first unchecked item; a box you (or a past session) ticked is exactly the check author bias would have gotten wrong.
 
 ## Per phase
 

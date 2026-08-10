@@ -24,9 +24,9 @@ Done when you can state the current behavior with `file:line` references, not gu
 
 ### 2. Resolve every open decision
 
-Resolve anything the code can't answer with the user. For a substantial plan, run a `/grilling` session on the open decisions — the relentless tree-walk surfaces the edge cases and tradeoffs each choice makes. For a small one, just ask the few questions the code couldn't answer.
+Resolve anything the code can't answer with the user. For a substantial plan, interview them down the decision tree: work one branch at a time, resolving each decision before the ones that depend on it, and for every question surface its edge cases and name the tradeoff it makes against the alternative you're rejecting. If a `grilling` skill is installed, use it for this. For a small plan, just ask the few questions the code couldn't answer.
 
-Then enumerate the installed skills and match each phase's task class to one (`ls ~/.claude/skills .claude/skills .agents/skills`). A locally-installed skill is pre-vetted for this stack — name it in the plan's References and in the relevant phase so `/implement` reuses it instead of reinventing the approach.
+Then enumerate the installed skills and match each phase's task class to one (`ls ~/.claude/skills ~/.codex/skills ~/.pi/agent/skills .claude/skills .agents/skills 2>/dev/null`). A locally-installed skill is pre-vetted for this stack — name it in the plan's References and in the relevant phase so `/implement` reuses it instead of reinventing the approach.
 
 Done when no open questions remain. Every decision is made before you write.
 

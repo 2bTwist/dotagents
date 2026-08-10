@@ -33,7 +33,7 @@ What features will we be tempted to add later that actually belong in a differen
 
 ## Hand-off
 - To operationalize the rebuild: `/plan <doc-path>`.
-- To stress-test this framing first: `/grill-me <doc-path>`.
+- To stress-test this framing first: grill the doc's tradeoffs (the `grill-me` skill if installed).
 - If this analysis is rejected and the conventional approach holds: `/plan` directly without first-principles framing.
 ```
 
