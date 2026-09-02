@@ -20,6 +20,14 @@
 #     publishable: no maintainer-specific identifiers or machine paths.
 #     instructions/references/*.local.md is git-ignored (that's where the
 #     machine-specific detail is meant to live instead).
+#   - Durable corrections follow one explicit storage hierarchy: architecture
+#     and data structures; constraints and types; lint, tests, and CI; lean
+#     AGENTS.md; curated local references or procedures; transcript only.
+#     Task state is never treated as durable by default, the legacy broad
+#     "Grow project memory" directive is gone, and memory-templates/ is no
+#     longer an active source tree.
+#   - Compacting durable task context is explicit-user-only. The compact skill
+#     must not trigger itself at phase boundaries or from context-budget state.
 #   - Every install run this script performs exits 0.
 #
 # Companion to install-smoke.sh (which covers skills/ and agents/); this file
@@ -46,6 +54,8 @@ REPO_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
 INSTALLER="$REPO_ROOT/install.sh"
 LIB_SH="$REPO_ROOT/install.d/_lib.sh"
 CORE_MD="$REPO_ROOT/instructions/core.md"
+COMPACT_MD="$REPO_ROOT/skills/compact/SKILL.md"
+HIGH_RISK_MD="$REPO_ROOT/instructions/references/high-risk-engineering.md"
 
 PASS=0
 FAIL=0
@@ -402,13 +412,22 @@ for target in "${TARGETS[@]}"; do
         badRefs+=("$relname:content-differs")
       fi
     done
-    if [[ ${#badRefs[@]} -eq 0 ]]; then
+  if [[ ${#badRefs[@]} -eq 0 ]]; then
       pass "[#11] $target: all repo reference *.md files installed byte-identical (${#REPO_REFERENCE_FILES[@]} file(s))"
     else
       fail "[#11] $target: all repo reference *.md files installed byte-identical (expected ${#REPO_REFERENCE_FILES[@]} ok, got ${#badRefs[@]} problem(s): ${badRefs[*]})"
     fi
   else
     fail "[#11] $target: all repo reference *.md files installed byte-identical (expected at least one *.md under $REPO_REFERENCES_DIR, found none)"
+  fi
+
+  highRiskDest="$refDirA/high-risk-engineering.md"
+  if [[ -f "$HIGH_RISK_MD" ]] && cmp -s "$HIGH_RISK_MD" "$highRiskDest"; then
+    pass "[#19] $target: portable high-risk reference installs byte-identically"
+  elif [[ -f "$HIGH_RISK_MD" ]]; then
+    fail "[#19] $target: portable high-risk reference installs byte-identically (expected $highRiskDest to match $HIGH_RISK_MD)"
+  else
+    fail "[#19] $target: portable high-risk reference installs byte-identically (canonical source $HIGH_RISK_MD is missing)"
   fi
 
   # --- Sub-test B: idempotence -- #5 ---------------------------------------
@@ -610,11 +629,189 @@ for target in "${TARGETS[@]}"; do
   scan_forbidden_tokens "$(preamble_src_path "$target")" "instructions/preamble/$target.md"
 done
 
+# Portable references are clone-safe sources. Unlike *.local.md files, they
+# cannot contain a maintainer identifier, machine path, or secret-shaped value.
+portableReferenceCount=0
+portableReferenceProblems=()
+for portableRef in "$REPO_REFERENCES_DIR"/*.md; do
+  [[ -f "$portableRef" ]] || continue
+  case "$(basename "$portableRef")" in
+    *.local.md) continue ;;
+  esac
+  portableReferenceCount=$((portableReferenceCount + 1))
+  for forbiddenToken in "${FORBIDDEN_TOKENS[@]}"; do
+    if grep -qiF -- "$forbiddenToken" "$portableRef"; then
+      portableReferenceProblems+=("$(basename "$portableRef"):contains-$forbiddenToken")
+    fi
+  done
+  if grep -Eqi -- '(api[_-]?key|access[_-]?token|secret|password)[[:space:]]*[:=][[:space:]]*[[:alnum:]_.-]{8,}' "$portableRef"; then
+    portableReferenceProblems+=("$(basename "$portableRef"):contains-secret-shaped-value")
+  fi
+done
+
+if [[ "$portableReferenceCount" -eq 0 ]]; then
+  fail "[#20] portable references are publishable (expected at least one non-local instructions/references/*.md file)"
+elif [[ ${#portableReferenceProblems[@]} -eq 0 ]]; then
+  pass "[#20] portable references are publishable (no machine identifiers, machine paths, or secret-shaped values in $portableReferenceCount file(s))"
+else
+  fail "[#20] portable references are publishable (found: ${portableReferenceProblems[*]})"
+fi
+
+if [[ -s "$HIGH_RISK_MD" ]]; then
+  pass "[#21] instructions/references/high-risk-engineering.md exists as a non-empty portable reference"
+else
+  fail "[#21] instructions/references/high-risk-engineering.md exists as a non-empty portable reference (expected non-empty $HIGH_RISK_MD)"
+fi
+
+if git -C "$REPO_ROOT" check-ignore -q -- "instructions/references/high-risk-engineering.md"; then
+  fail "[#21] instructions/references/high-risk-engineering.md is publishable rather than git-ignored"
+else
+  pass "[#21] instructions/references/high-risk-engineering.md is publishable rather than git-ignored"
+fi
+
+require_high_risk_terms() {
+  local missing="" pattern
+  for pattern in "$@"; do
+    if ! grep -Eqi -- "$pattern" "$HIGH_RISK_MD" 2>/dev/null; then
+      missing="${missing}${missing:+; }/$pattern/"
+    fi
+  done
+  if [[ -z "$missing" ]]; then
+    pass "[#22] high-risk reference defines the required system model, evidence hierarchy, and architecture gate"
+  else
+    fail "[#22] high-risk reference defines the required system model, evidence hierarchy, and architecture gate (missing $missing)"
+  fi
+}
+
+require_high_risk_terms \
+  "promise" \
+  "state.{0,40}(own|owner)|own.{0,40}state" \
+  "invariant" \
+  "interaction" \
+  "failure.{0,40}recovery|recovery.{0,40}failure" \
+  "verification.{0,40}oracle|oracle" \
+  "alternative" \
+  "future.{0,40}constraint|constraint" \
+  "migration" \
+  "reversal|reverse" \
+  "transcript.{0,80}(hypoth|not.{0,40}fact)|hypoth.{0,80}transcript" \
+  "installed.{0,80}version|primary.{0,80}source|current.{0,80}code|production.{0,80}evidence" \
+  "persistent.{0,40}(ownership|state)|durable.{0,40}(format|data)" \
+  "public.{0,40}interface|trust.{0,40}boundar|security.{0,40}boundar" \
+  "concurren|consistency" \
+  "dependency.{0,40}topology|deployment.{0,40}shape" \
+  "pause" \
+  "explicit.{0,60}(confirm|approval)|confirm.{0,60}(resume|implement)|approval.{0,60}(resume|implement)" \
+  "current.{0,50}system.{0,50}model|system.{0,50}model" \
+  "tradeoff" \
+  "verification.{0,50}evidence|evidence.{0,50}verification" \
+  "reversal.{0,50}cost|cost.{0,50}reversal" \
+  "active.{0,50}safety.{0,50}(halt|stop)|safety.{0,50}(halt|stop)"
+
 if git -C "$REPO_ROOT" check-ignore -q -- "instructions/references/machine.local.md"; then
   pass "[#9] instructions/references/*.local.md is git-ignored"
 else
   fail "[#9] instructions/references/*.local.md is git-ignored (git check-ignore did not match instructions/references/machine.local.md)"
 fi
+
+# ---------------------------------------------------------------------------
+# Durable-correction policy. These assertions encode the required precedence
+# directly instead of learning it from an installer or template. The six
+# labels must appear as one contiguous ordered hierarchy in the canonical
+# core. Their exact spelling keeps a prose rewrite from silently changing the
+# storage decision rule.
+# ---------------------------------------------------------------------------
+
+group "durable-corrections"
+
+DURABLE_HIERARCHY="$TMP_ROOT/durable-corrections.expected"
+cat >"$DURABLE_HIERARCHY" <<'EOF'
+1. Architecture/data structures
+2. Constraints/types
+3. Lint/tests/CI
+4. Lean AGENTS.md
+5. Curated local reference/procedure
+6. Transcript only
+EOF
+
+hierarchyLine="$(block_start_line "$CORE_MD" "$DURABLE_HIERARCHY")"
+if [[ "$hierarchyLine" -gt 0 ]]; then
+  pass "[#13] instructions/core.md contains the required durable-corrections hierarchy in exact precedence"
+else
+  fail "[#13] instructions/core.md contains the required durable-corrections hierarchy in exact precedence (expected the six canonical lines from architecture/data structures through transcript only as one contiguous block)"
+fi
+
+if [[ -f "$CORE_MD" ]] && grep -qiF -- "Grow project memory" "$CORE_MD"; then
+  fail "[#14] instructions/core.md rejects the legacy 'Grow project memory' directive (expected absent, found it)"
+elif [[ -f "$CORE_MD" ]]; then
+  pass "[#14] instructions/core.md rejects the legacy 'Grow project memory' directive"
+else
+  fail "[#14] instructions/core.md rejects the legacy 'Grow project memory' directive (cannot check: $CORE_MD missing)"
+fi
+
+if [[ -f "$CORE_MD" ]] && grep -qF -- "Task state is not automatically preserved." "$CORE_MD"; then
+  pass "[#15] instructions/core.md explicitly states that task state is not automatically preserved"
+elif [[ -f "$CORE_MD" ]]; then
+  fail "[#15] instructions/core.md explicitly states that task state is not automatically preserved (expected exact rule: 'Task state is not automatically preserved.')"
+else
+  fail "[#15] instructions/core.md explicitly states that task state is not automatically preserved (cannot check: $CORE_MD missing)"
+fi
+
+MEMORY_TEMPLATES_DIR="$REPO_ROOT/memory-templates"
+activeMemorySources=0
+if [[ -d "$MEMORY_TEMPLATES_DIR" ]]; then
+  activeMemorySources="$(find "$MEMORY_TEMPLATES_DIR" -type f 2>/dev/null | wc -l | tr -d ' ')"
+fi
+if [[ "$activeMemorySources" -eq 0 ]]; then
+  pass "[#16] memory-templates/ is not an active source directory"
+else
+  fail "[#16] memory-templates/ is not an active source directory (found $activeMemorySources active source file(s) under $MEMORY_TEMPLATES_DIR)"
+fi
+
+# ---------------------------------------------------------------------------
+# Durable-context trigger policy. Compaction writes session state to a durable
+# handoff, so it must be a deliberate user request rather than an automatic
+# response to phase or context-budget state. Inspect the public skill
+# description because that is the harness-visible trigger surface.
+# ---------------------------------------------------------------------------
+
+group "durable-context-trigger"
+
+COMPACT_EXPLICIT_TRIGGER="Use only when the user explicitly asks to compact, hand off, or wrap up for a clean restart."
+compactDescription=""
+if [[ -f "$COMPACT_MD" ]]; then
+  compactDescription="$(awk '
+    NR==1 && $0=="---" { infm=1; next }
+    infm && $0=="---" { exit }
+    infm && /^description:/ {
+      sub(/^description:[ \t]*/, "")
+      print
+      exit
+    }
+  ' "$COMPACT_MD")"
+fi
+
+case "$compactDescription" in
+  *"$COMPACT_EXPLICIT_TRIGGER"*)
+    pass "[#17] compact skill declares the exact explicit-user-only trigger"
+    ;;
+  *)
+    fail "[#17] compact skill declares the exact explicit-user-only trigger (expected exact statement: '$COMPACT_EXPLICIT_TRIGGER')"
+    ;;
+esac
+
+COMPACT_AUTOMATIC_TRIGGERS=(
+  "phase boundary"
+  "context budget is warned"
+  "nearly spent"
+)
+for automaticTrigger in "${COMPACT_AUTOMATIC_TRIGGERS[@]}"; do
+  if printf '%s\n' "$compactDescription" | grep -qiF -- "$automaticTrigger"; then
+    fail "[#18] compact skill rejects automatic trigger '$automaticTrigger' (expected absent from description, found it)"
+  else
+    pass "[#18] compact skill rejects automatic trigger '$automaticTrigger'"
+  fi
+done
 
 # ---------------------------------------------------------------------------
 # Summary

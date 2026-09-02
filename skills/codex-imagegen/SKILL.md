@@ -5,7 +5,7 @@ description: Generate or edit real image files (PNG/JPEG) by shelling out to Cod
 
 # Codex imagegen
 
-Claude Code has no first-party image model. Codex CLI ships one: its bundled `imagegen` skill generates and edits images against the user's existing ChatGPT login. Verified working on this machine (2026-07-12, codex-cli 0.144.1, `codex login status` = ChatGPT).
+Claude Code has no first-party image model. Codex CLI ships one: its bundled `imagegen` skill generates and edits images against the user's existing ChatGPT login. Verified against codex-cli 0.144.1 with `codex login status` reporting ChatGPT; re-check both if a run fails at the auth step.
 
 ## Decision rule first
 
@@ -29,7 +29,7 @@ codex exec --skip-git-repo-check -s workspace-write \
 Everything is natural language, there are no size/quality flags. Always state:
 
 1. "Use your imagegen skill" (anchors tool choice).
-2. The image content, style, palette. For BeSeen work: soft lavender (#7565B8 / #5C4696), warm cream (#FAF8F5), calm and intimate, never loud.
+2. The image content, style, and palette. Where the project fixes a palette or a tone, state the hex values and the mood in the prompt — the model has no access to the repo's design tokens.
 3. Size (e.g. 1024x1024, 1536x1024), quality (LOW for drafts and plumbing tests, HIGH only for finals), count, transparency if needed.
 4. The EXACT output path: "Save it as ./name.png in this directory."
 5. "Do nothing else."

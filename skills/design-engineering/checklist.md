@@ -104,8 +104,27 @@ browser test) and judged the feel, not just looked at a screenshot.
 Then degrade it on purpose, because ideal conditions hide the real failures: throttle the
 network to expose missing loading states, paste instead of typing, navigate by keyboard
 only, load empty and overlong content, and shrink the window to find what breaks first.
-Run the hesitation test from SKILL.md over the result. Any half-second pause is a defect,
-including the ones you want to blame on yourself.
+**The components that break under stress are the load-bearing ones.**
+
+Then run the hesitation test below, and the tell test from SKILL.md. Anything you cannot
+name a job for comes out.
+
+## The hesitation test
+
+Drive the interface yourself. **Any half-second pause marks a real defect**, and the
+instinct to dismiss it as your own distraction is wrong: if you hesitated there, users
+hesitate there, and they will never tell you. Four signals, each with its own cause:
+
+- **The second click.** You clicked and clicked again. Either the first click was not
+  confirmed fast enough, or the hit target sits a few pixels off the visible control and
+  the first click hit nothing at all.
+- **Cursor drift.** The pointer hovers around but never lands. Either the hit target is
+  too small or unclear, or it is a recognition failure: the option is there and the eye
+  cannot find it.
+- **Reflexive undo.** You undid an action that was correct, because nothing confirmed
+  what happened and you went to check.
+- **Re-reading.** A label read twice is a wording problem, not a reader problem. Name the
+  outcome ("Delete 3 invoices"), not the mechanism ("Confirm").
 
 ## Existing components
 

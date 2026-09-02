@@ -9,42 +9,21 @@ harness:
 
 A discipline for answering "what is making this agent slow?" with evidence, not intuition. The data already exists: Claude Code writes every session to JSONL with per-message timestamps, so the full wall-clock can be reconstructed.
 
-**Lead with the punchline so the user doesn't chase the wrong thing:** across large real-session studies, *tool execution is ~0.4% of end-to-end wall-clock*. Making a tool faster (e.g. ripgrep 14.7ms → 1.7ms) barely moves total runtime. The time goes to **model inference, the number of round-trips, approval/human waits, and external processes (builds/installs/network)**. Optimize those. Tool-speed micro-optimization is almost always low-leverage even when it's a satisfying multiple.
+**Measure before you optimize, because the intuitive answer is the wrong one.** The felt cause is "the tools are slow." The wall-clock almost always sits in **model inference, the number of round-trips, approval/human waits, and external processes (builds, installs, network)** — none of which get faster when a tool does. Making ripgrep go 14.7ms → 1.7ms is a satisfying multiple and a rounding error on the session. Phase 1 produces the actual split for *this* project, so the report rests on that number rather than on this paragraph.
 
 ## Phase 1 — Reconstruct the wall-clock from transcripts
 
-Transcripts live at `~/.claude/projects/<sanitized-cwd>/*.jsonl`. Each line is a JSON object. Pair every `tool_use` (in an `assistant` message) to its `tool_result` (in the next `user` message) by `tool_use_id`, and diff the top-level `timestamp` fields for true tool wall-clock. Diff consecutive messages for model turnaround.
+Transcripts live at `~/.claude/projects/<sanitized-cwd>/*.jsonl`, one JSON object per line. Run the parser beside this file:
 
-Stream the files (they can be >1 GB); never load them whole. Core loop:
-
-```js
-// node: stream all sessions, attribute ms per tool and model turnaround
-const fs=require("fs"),rl=require("readline"),path=require("path");
-const DIR=process.argv[2]; // ~/.claude/projects/<slug>
-const files=fs.readdirSync(DIR).filter(f=>f.endsWith(".jsonl")).map(f=>path.join(DIR,f));
-const tool={}, turn=[]; const push=(o,k,v)=>(o[k]=o[k]||[]).push(v);
-(async()=>{ for(const f of files){ await new Promise(res=>{
-  const pend=new Map(); let lastTs=null,lastUser=false;
-  rl.createInterface({input:fs.createReadStream(f)}).on("line",l=>{
-    let o; try{o=JSON.parse(l)}catch{return}
-    const ts=o.timestamp?Date.parse(o.timestamp):null, c=o.message&&o.message.content;
-    if(o.type==="assistant"&&ts&&lastTs&&lastUser){const d=ts-lastTs; if(d>=0&&d<1.8e6)turn.push(d);}
-    if(Array.isArray(c)){
-      for(const b of c) if(b.type==="tool_use"&&ts) pend.set(b.id,{ts,name:b.name});
-      for(const b of c) if(b.type==="tool_result"&&ts){const m=pend.get(b.tool_use_id);
-        if(m){const d=ts-m.ts; if(d>=0) push(tool,m.name,d); pend.delete(b.tool_use_id);}}
-    }
-    if(ts){lastTs=ts; lastUser=(o.type==="user");}
-  }).on("close",res); })}
-  const stat=a=>{const s=a.sort((x,y)=>x-y),q=p=>s[Math.floor(p*s.length)];
-    return{n:s.length,p50:q(.5),p99:q(.99),max:s.at(-1),total:s.reduce((x,y)=>x+y,0)};};
-  for(const [k,a] of Object.entries(tool).sort((A,B)=>B[1].length-A[1].length))
-    console.log(k.padEnd(24), JSON.stringify(stat(a)));
-  console.log("MODEL TURNAROUND", JSON.stringify(stat(turn)));
-})();
+```
+node <this skill dir>/attribute.mjs ~/.claude/projects/<sanitized-cwd>
 ```
 
-Report a table sorted by **total** time (frequency × duration), not by peak. Then split each tool's distribution into bands (`<300ms / 0.3-1s / 1-3s / 3-10s / >10s`) — bimodality reveals hidden waits (see Phase 2).
+It streams every session file (they reach gigabytes; nothing is read whole), pairs each `tool_use` to its `tool_result` by `tool_use_id` and diffs the top-level `timestamp` fields for true tool wall-clock, diffs user→assistant pairs for model turnaround, and prints per-tool `{n, p50, p99, max, total}` sorted by **total** (frequency × duration), not by peak.
+
+Its closing `TOOL SHARE` line is the headline number, with one caveat it prints for you: the denominator is measured time only, so it is an upper bound on the tool share of true end-to-end wall-clock, and it still counts approval waits and external processes as "tool." Phase 2 splits those out.
+
+Then band each tool's distribution (`<300ms / 0.3-1s / 1-3s / 3-10s / >10s`). **Bimodality is the tell**: a tool with two clusters is not one operation with variance, it is two different things sharing a name (see Phase 2).
 
 ## Phase 2 — Attribute, don't assume
 
@@ -55,7 +34,7 @@ A `tool_use → tool_result` delta conflates several things. Separate them:
 - **External processes** (build/install/test/network) → irreducible runtime; lever is frequency, not speed.
 - **Model turnaround** → queue + prefill + generate. Usually the single largest total. Scales with context size and how much the agent thinks, not with hardware.
 
-Prove micro-costs locally before claiming them. Example: shell-init is the usual culprit behind a "slow" Bash floor — `zsh -i` re-sources the full profile *every call* (a stateless-shell-per-call design). Benchmark it: `zsh -i -c true` vs `zsh -c true`; profile the rc with `zmodload zsh/zprof`; time each `eval "$(...)"` line (version managers like pyenv/rbenv/nvm run external binaries on every shell). But weigh the result against the 0.4% rule before celebrating.
+Prove micro-costs locally before claiming them. Example: shell-init is the usual culprit behind a "slow" Bash floor — `zsh -i` re-sources the full profile *every call* (a stateless-shell-per-call design). Benchmark it: `zsh -i -c true` vs `zsh -c true`; profile the rc with `zmodload zsh/zprof`; time each `eval "$(...)"` line (version managers like pyenv/rbenv/nvm run external binaries on every shell). Then multiply the saving by the call count from Phase 1 before celebrating — that product, not the multiple, is what the session gets back.
 
 ## Phase 3 — Fix by leverage, highest first
 
@@ -66,8 +45,13 @@ Rank fixes by total wall-clock returned, and name which are physics vs config vs
 3. **Don't fixed-`sleep`-poll.** Background long jobs and let the harness wake on completion; fixed sleeps over-wait and silently dominate (often hours across a project's history).
 4. **Context size.** Keep tool output and full-file Reads out of context unless they'll be used — prefill is re-paid every turn. Compact intentionally.
 5. **External process frequency.** Incremental type-check/build caches, fewer clean rebuilds. Not "make the build ms"; make it run rarely.
-6. **Tool/shell micro-speed (lowest).** Real but ~0.4% of end-to-end. Free wins (trim shell profile, cache completions) are worth taking once, but never the headline.
+6. **Tool/shell micro-speed (lowest).** Real, and worth the free wins once (trim shell profile, cache completions). Never the headline: rank it by its Phase-1 total, which is what puts it here.
 
 ## Output
 
-A short report: the time-attribution table (sorted by total), the bimodality finding (what is tool vs approval vs inference), and a leverage-ranked fix list that is honest about what is physics, what is config, and what is the agent's own habit. End by stating the single highest-leverage change, which is almost never "the tool was slow."
+A short report, done when all four are in it:
+
+- The time-attribution table from Phase 1, sorted by total, with the `TOOL SHARE` line and its caveat.
+- The Phase-2 split: for every tool whose distribution was bimodal, which cluster is tool speed, which is approval, which is an external process.
+- A leverage-ranked fix list, each item labelled physics / config / habit, each carrying the wall-clock it returns.
+- One sentence naming the single highest-leverage change. If that sentence says "a tool was slow," re-check Phase 2 — you have probably read an approval wait or a build as tool time.

@@ -1,10 +1,20 @@
 # Groundwork plan template
 
-Copy this structure verbatim into `specs/plans/YYYY-MM-DD-groundwork-<slug>.md`. Fill each section with concrete content from steps 2-4 of [SKILL.md](SKILL.md).
+Copy this structure verbatim into `specs/plans/YYYY-MM-DD-groundwork-<slug>.md`. Fill each section with concrete content from steps 1-4 of [SKILL.md](SKILL.md).
 
 ---
 
 # Groundwork: <task class> — <YYYY-MM-DD>
+
+## Problem frame
+
+- **Desired outcome and success condition:** <observable result>
+- **Evidence and current failure:** <what is known, with repo paths or user evidence where available>
+- **Working classes:** <primary and secondary classes, each marked established, hybrid, uncertain, or potentially novel>
+- **Problem shape:** <diagnosis, optimization, coordination, transformation, etc.>
+- **Constraints and invariants:** <what cannot be traded away>
+- **Open uncertainties:** <facts that remain provisional>
+- **Research lanes:** <disciplines and technique families to investigate without choosing a solution yet>
 
 ## Current state (5 bullets max)
 Concrete facts about the current repo. No analysis.
@@ -19,12 +29,12 @@ For each of 2-3 reputable solutions (libraries, services, or reference repos):
 
 **Convergence note:** which library OR conventions recur across multiple sources. If fewer than 2 reputable solutions were found, state the search queries used and call out the absence.
 
-**Build vs adopt.** If a maintained library covers this cleanly and the repo's constraints don't preclude it, the plan adopts it and the cleanup phases integrate it. If the plan recommends building from scratch, this section names the off-the-shelf candidates considered and the explicit reason none fit (license, scale, dependency surface, performance, control over data, team capacity, etc.).
+**Build vs adopt.** If a maintained library satisfies the working frame's success criteria and constraints across every material research lane, the plan adopts it and the cleanup phases integrate it. If the plan recommends building from scratch, this section names the off-the-shelf candidates considered and the explicit reason none fit (license, scale, dependency surface, performance, control over data, team capacity, etc.).
 
 ## Skills available to install
-Existing agent skills that match this topic, found in step 2a. Skip this section if no skills matched.
+Existing agent skills that match the working problem frame, found in step 2a. Skip this section if no skills matched.
 
-- **<skill name>** (`<repo>/<path>`) — SKILL.md description, 1-2 lines. Install via `npx skills@latest add <repo>/<path>` or copy SKILL.md (and any supporting files) to `~/.claude/skills/<skill-name>/`.
+- **<skill name>** (`<repo>/<path>`) — SKILL.md description, 1-2 lines. Install via `npx skills@latest add <repo>/<path>` or copy SKILL.md (and any supporting files) into this harness's skills directory.
 
 ## Canonical guidance consulted
 For each of 2-4 sources (combine 2a skills + 2b search results + 2c papers if applicable):

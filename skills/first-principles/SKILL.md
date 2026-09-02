@@ -1,6 +1,6 @@
 ---
 name: first-principles
-description: Produce a first-principles re-framing of a substantial task, decision, or product surface before /plan. The agent identifies the conventional incumbent approach, questions whether its core assumptions still hold, decomposes the problem into atomic primitives, and proposes the embarrassingly-good rebuild of the primitive most worth rethinking. Writes a 7-section analysis to specs/first-principles/YYYY-MM-DD-<slug>.md. Suggest invoking when about to start a substantial new feature surface, architectural decision, or product direction with an obvious incumbent approach to copy. Skip for /oneshot territory, bug fixes, pure mapping (/research), or work that already has prior art in this repo.
+description: Re-frame a substantial task from first principles before /plan — name the incumbent approach, question its assumptions, decompose into atomic primitives, propose the embarrassingly-good rebuild of the one worth rethinking. Writes the analysis to specs/first-principles/YYYY-MM-DD-<slug>.md. Suggest invoking before a new feature surface, an architectural decision, or a product direction with an obvious incumbent to copy. Skip for bug fixes, /oneshot work, pure mapping (/research), or anything with prior art already in this repo.
 model: opus
 harness:
   degrades: [subagents]
@@ -8,7 +8,7 @@ harness:
 
 # First-Principles Re-framing
 
-Apply the seven-step Pierre Computer Company analysis to a topic the user names. **The agent does the reasoning; the user reviews and pushes back.** This is not an interview. The output is an agent-authored doc that questions the conventional framing before `/plan` operationalizes a solution.
+Apply the Pierre Computer Company analysis to a topic the user names, in the section structure [`FORMAT.md`](FORMAT.md) fixes. **The agent does the reasoning; the user reviews and pushes back.** This is not an interview. The output is an agent-authored doc that questions the conventional framing before `/plan` operationalizes a solution.
 
 The skill is **topic-agnostic**. It does not hardcode domain, stack, or industry. The argument the user supplies — fuzzy or precise — determines what the analysis targets.
 
@@ -44,7 +44,7 @@ Spawn three sub-agents via the Task tool, all at once:
 
 Verify every load-bearing sub-agent claim against its cited source before using it. Same-model sub-agents improve context separation; they do not produce independent evidence.
 
-While sub-agents run, read `~/.claude/skills/first-principles/CANON.md` to load anchor examples. Scan `MEMORY.md` (in the project's auto-memory directory) if it exists, for standing constraints relevant to the topic.
+While sub-agents run, read [`CANON.md`](CANON.md) beside this file to load anchor examples. Scan `MEMORY.md` (in the project's auto-memory directory) if it exists, for standing constraints relevant to the topic.
 
 ### 3. Synthesize and write the analysis
 

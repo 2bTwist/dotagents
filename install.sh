@@ -13,6 +13,7 @@
 #   ./install.sh --list                   # what would install where, and what is skipped
 #   ./install.sh --dry-run                # show the plan, write nothing
 #   ./install.sh --force                  # overwrite existing files
+#   ./install.sh --instructions-only      # update instructions and references only
 #   ./install.sh --symlink                # link instead of copy (repo edits apply live)
 #   ./install.sh --with-optional          # also install optional/ packages
 #
@@ -28,6 +29,7 @@ FORCE=false
 DRY_RUN=false
 LIST_ONLY=false
 WITH_OPTIONAL=false
+INSTRUCTIONS_ONLY=false
 DEST=""
 TARGETS=()
 
@@ -44,6 +46,7 @@ for arg in "$@"; do
     --dry-run)      DRY_RUN=true ;;
     --list)         LIST_ONLY=true; DRY_RUN=true ;;
     --with-optional) WITH_OPTIONAL=true ;;
+    --instructions-only) INSTRUCTIONS_ONLY=true ;;
     -h|--help)      grep '^#' "$0" | sed 's/^# \?//' | head -22; exit 0 ;;
     *)              echo "Unknown arg: $arg" >&2; exit 1 ;;
   esac
@@ -82,6 +85,12 @@ install_target() {
   say "== $HARNESS_NAME ($target)"
   say "   root: $(harness_root)"
   [ -n "$HARNESS_CAPS" ] && say "   capabilities: $HARNESS_CAPS" || say "   capabilities: none"
+
+  if $INSTRUCTIONS_ONLY; then
+    install_instructions "$target"
+    say "   instructions only"
+    return 0
+  fi
 
   do_mkdir "$(harness_skills_dir)"
 
@@ -211,9 +220,9 @@ install_instructions() {
   install_references
 }
 
-# Machine-local reference files, read on demand. Gitignored in the repo, so a
-# clone carries only the README. The repo copy is canonical: these are overwritten
-# on every install rather than skipped, since the installed copy is a pure copy.
+# Portable and machine-local reference files, read on demand. Local files are
+# gitignored. The repo copy is canonical: references are overwritten on every
+# install rather than skipped, since the installed copy is a pure copy.
 install_references() {
   local srcdir="$REPO_DIR/instructions/references"
   local destdir ref
@@ -235,6 +244,10 @@ install_references() {
     return 0
   fi
 
+  # Copy mode must replace a link from an earlier symlink-mode install before
+  # removing destination files. Otherwise those removals follow the link and
+  # delete the canonical source references.
+  [ -L "$destdir" ] && do_rm "$destdir"
   do_mkdir "$destdir"
   local n=0
   for ref in "$srcdir"/*.md; do

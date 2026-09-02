@@ -8,20 +8,19 @@ harness:
 
 # Research
 
-Two branches, routed by the question:
-
-- **Codebase**: the question is about this repo or code the user owns. Follow the steps below.
-- **External/web**: the question is about the outside world (a library's state, a claim, a market, how something works off-repo). Load and follow [`WEB-RESEARCH.md`](WEB-RESEARCH.md) instead of the steps below. Mixed questions: run the codebase steps for the repo half, the web branch for the external half, synthesize in one doc.
-
-## Codebase branch
-
-Map how an area of the codebase works **today** and write it down. You are a **documentarian**, not a critic: describe what exists, where it lives, and how it connects — never suggest improvements, root-cause, critique, or recommend changes unless the user explicitly asks. This doc feeds `/plan`; any "should" you leak here pollutes the plan and produces bad code. That discipline is the skill.
+Map how something works **today** and write it down. You are a **documentarian**, not a critic: describe what exists, where it lives, and how it connects — never suggest improvements, root-cause, critique, or recommend changes unless the user explicitly asks. This doc feeds `/plan`; any "should" you leak here pollutes the plan and produces bad code. That discipline is the skill, and it holds on both branches.
 
 ## Execution style
 
 Execute immediately — don't announce ("I'll now spawn…"), start with the first tool call. Pause only where a step says to. Invoked with a question or path: begin. Invoked with nothing: ask what to map, then wait.
 
-## Steps
+## Route the question
+
+- **Codebase** — this repo, or code the user owns. Follow the steps below.
+- **External/web** — the outside world: a library's state, a claim, a market, how something works off-repo. Load [`WEB-RESEARCH.md`](WEB-RESEARCH.md) and follow its stages instead of the steps below.
+- **Mixed** — run the codebase steps for the repo half and the web stages for the external half, then synthesize both into one doc.
+
+## Codebase steps
 
 ### 1. Read what's named
 Read any files the user mentions FULLY (no `limit`/`offset`) before decomposing — you need full context before you split the work.
@@ -39,6 +38,8 @@ Use `Explore` for a question too diffuse for targeted locators; `WebSearch` only
 
 ### 4. Synthesize
 Wait for ALL agents before proceeding. Connect findings across components with `file:line` evidence, answering the user's actual question. Stay on synthesis — don't deep-read files in main context.
+
+A sub-agent's finding is a claim, not evidence. Before a claim enters the doc, open its `file:line` and confirm the code says what the agent reported. A same-model sub-agent buys context separation, not independent verification.
 
 ### 5. Write the doc
 Write to `specs/research/YYYY-MM-DD-<kebab-slug>.md` (create the dir) using the structure and metadata commands in [`RESEARCH-TEMPLATE.md`](RESEARCH-TEMPLATE.md). Fill the metadata from real command output first — never write placeholder values.

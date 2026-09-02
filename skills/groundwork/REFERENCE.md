@@ -1,23 +1,68 @@
 # Groundwork — Reference
 
-Detailed protocols for steps 1, 2a, 2c, and 3 of [SKILL.md](SKILL.md). These are rarely-needed-as-a-block — the SKILL.md summary covers most invocations. Reach here when an invocation actually needs the full procedure.
+Detailed protocols for steps 1, 2a, 2c, and 3 of [SKILL.md](SKILL.md). These are rarely needed as a block. The SKILL.md summary covers most invocations. Reach here when an invocation actually needs the full procedure.
+
+## Problem-framing protocol
+
+The purpose of framing is to choose useful research lanes, not to prove that the request belongs to a known category. Begin with the observed world and desired outcome. Treat every label as provisional.
+
+### Ask only questions that change the research
+
+Inspect the user's prompt and available repository evidence before asking. Use one compact batch of 1-3 questions when the missing answers could change the problem classes, success criteria, or sources to consult. Do not ask the user to supply jargon.
+
+High-information question targets:
+
+- **Outcome:** What observable behavior should improve, and how would we know it worked?
+- **Evidence:** What is happening now? Which examples, traces, measurements, or user reports distinguish the real failure from a guessed cause?
+- **Boundary:** Where is the relevant state or decision made, and what other systems or people interact with it?
+- **Constraints:** Which tradeoffs are unacceptable: correctness, latency, memory, cost, privacy, safety, reversibility, explainability, compatibility, or operational burden?
+- **Interpretation:** When the description plausibly means different things, which interpretation matches the user's intent?
+
+Ask only the missing subset. A concrete request such as "add retries to these background jobs while preserving at-most-once billing" usually needs no intake questions. An underspecified request such as "help support understand customer themes" needs clarification because search, summarization, routing, and longitudinal analysis imply different evidence and verification.
+
+### Classify on more than one axis
+
+Use two or more dimensions instead of forcing one noun:
+
+1. **System domain:** algorithms and data structures; persistent state and lifecycle; concurrency and distributed coordination; performance and resource use; reliability and operations; security, privacy, and trust; integration and protocols; statistical or ML inference; search and retrieval; interaction and human factors; organizational process.
+2. **Problem shape:** diagnosis, prediction or decision, search or planning, optimization, transformation, synchronization or coordination, control and feedback, migration or evolution.
+3. **Dominant constraints:** correctness, consistency, latency, throughput, memory, cost, privacy, safety, reversibility, explainability, compatibility, or team operations.
+
+This vocabulary is intentionally non-exhaustive. Record a primary class only when evidence supports it. Keep secondary classes when they materially affect the solution. Mark the frame **hybrid** when domains interact, **uncertain** when evidence is insufficient, and **potentially novel** when established categories explain only part of the behavior.
+
+Disambiguate overloaded words. "Memory" might mean process memory, durable application state, agent context, human recall, or retrieval. "AI problem" might actually be search, ranking, workflow automation, interface design, or statistical inference. An LLM is a technique worth investigating only when the framed task needs capabilities it plausibly supplies and there is an evaluation that can distinguish success from fluent-looking failure.
+
+### Route research without prejudging the solution
+
+Turn the working frame into multiple search lanes when needed:
+
+- algorithmic or optimization work: foundational algorithms, complexity bounds, benchmarks, and reference implementations;
+- state, concurrency, or distributed work: invariants, failure models, database or protocol documentation, and production recovery patterns;
+- ML or statistical inference: non-ML baselines, data and label quality, evaluation design, error costs, papers, and maintained implementations;
+- security, privacy, or trust: threat models, standards, abuse cases, and independently maintained guidance;
+- performance or reliability: measurements, budgets, capacity models, failure injection, and operational evidence;
+- interaction or organizational work: user evidence, accessibility or human-factors guidance, workflow constraints, and comparable deployed systems.
+
+These are routing examples, not a closed mapping. Research adjacent mechanisms when no exact label fits. State what is known, what is inferred, and what remains unresolved.
 
 ## Skill-crawl protocol
 
-Step 1 inference vocabulary. The user is not required to know the canonical name for what they want. Map the fuzzy description to a canonical topic name before research starts.
+Step 2a evidence discovery. The user is not required to know the canonical name for what they want. Skill names are possible search terms after the problem frame exists; they are not the vocabulary authority for step 1.
 
-**Check locally installed skills FIRST** (before any network call). They are already vetted for this stack, and a locally-present skill is the strongest signal the problem is solved here. Enumerate every skill source, then read the `description:` frontmatter of each candidate to match against the task class:
+**Check locally installed skills FIRST** (before any network call). They are already vetted for this stack, and a locally present match is a strong signal that a technique is supported here. It is not proof that the technique fits the framed problem. Enumerate every skill source, then read the `description:` frontmatter of each candidate to match against the task class:
 
 ```
-# every install location, including ones not surfaced to the current agent
-ls ~/.claude/skills .claude/skills .agents/skills 2>/dev/null
+# every install location on this machine, across harnesses, plus the repo's own
+ls ~/.claude/skills ~/.codex/skills ~/.pi/agent/skills .claude/skills .agents/skills 2>/dev/null
 # read frontmatter descriptions to match by topic
-for f in .agents/skills/*/SKILL.md ~/.claude/skills/*/SKILL.md; do echo "== $f"; sed -n '1,8p' "$f"; done
+for d in ~/.claude/skills ~/.codex/skills ~/.pi/agent/skills .claude/skills .agents/skills; do
+  for f in "$d"/*/SKILL.md; do [ -f "$f" ] && { echo "== $f"; sed -n '1,8p' "$f"; }; done
+done 2>/dev/null
 ```
 
-Note: `.agents/skills/` (and the `skills-lock.json` beside it) is the full local library — it includes skills NOT symlinked into `.claude/skills/`, so they never load into agent context but are still readable and citable. Match a local skill, read its `SKILL.md` with the Read tool, cite it by path. Only AFTER exhausting local matches, crawl published skills.
+Enumerate every location, not just the one the current harness loads from. A skill installed for another harness, or sitting in the repo without being loaded into context, is still readable and citable. It is evidence that relevant guidance or a related technique exists here, not that the framed problem is solved. Match one, read its `SKILL.md` with the Read tool, cite it by path. Only AFTER exhausting local matches, crawl published skills.
 
-List published skill names. Skill repo directory names are the cleanest source of canonical topic labels:
+List published skill names as additional evidence and technique leads:
 
 ```
 gh api repos/mattpocock/skills/contents             | jq -r '.[] | select(.type=="dir") | .name'
@@ -40,9 +85,9 @@ Aggregator READMEs to scan for additional pointers:
 - https://github.com/VoltAgent/awesome-agent-skills
 - https://github.com/travisvn/awesome-claude-skills
 
-Match the user's description against listed skill names. If multiple plausibly match with no obvious winner, ask: *"This could be `<a>` or `<b>` — which fits?"* Otherwise restate the inferred topic in one sentence and proceed.
+Match the working problem frame and its research lanes against listed skill names. Multiple matches can be useful when the problem is hybrid. Do not ask the user to choose between skill names unless that choice represents a real unresolved difference in desired outcome or constraints.
 
-If no published skill matches: derive a label from the substantive nouns in the description (filler stripped, kebab-case). Examples: "I want to add background jobs that retry" → `background-job-retries`. "build a real-time multiplayer game" → `realtime-multiplayer-game`.
+If no published skill matches, treat the absence as a finding and continue with vendor guidance, literature where applicable, and real-world solutions. Derive the file slug from the working problem frame. Examples: "I want to add background jobs that retry" → `background-job-failure-recovery`. "build a real-time multiplayer game" → `realtime-multiplayer-coordination`.
 
 If the argument is genuinely ambiguous with no substantive nouns at all (e.g. "fix the thing"), ask one clarifying question.
 
@@ -57,14 +102,14 @@ Recommend installing only the 1-3 that genuinely fit the user's stage. Skip skil
 
 For each matched skill: fetch `<repo>/<skill-dir>/SKILL.md` raw (skills.sh hits resolve to `https://skills.sh/<owner>/<repo>/<skill>` or its GitHub-raw equivalent). Capture name, source URL, the load-bearing principles in the body (verbatim quotes). Note any supporting files (`tests.md`, `mocking.md`, etc.) and fetch them too if they look relevant.
 
-A skill that exists on the topic is itself strong evidence — someone thought hard about the problem and wrote it down.
+A skill that exists on the topic is evidence that someone documented a procedure. Judge the procedure against the framed outcome, constraints, and stronger sources before relying on it.
 
 ## Academic search
 
-Fires only when the canonical topic from step 1 is research-adjacent: machine learning, algorithms, distributed systems theory, cryptography, statistical methods, formal verification, compilers, networking protocols, certain hardware. **Skip explicitly** for engineering-ergonomics topics (rate limiting, form architecture, CRUD scaffolding, build tooling, UI patterns) — note the skip in one line and move on.
+Fires only when the working problem frame includes a research-adjacent lane: machine learning, algorithms, distributed systems theory, cryptography, statistical methods, formal verification, compilers, networking protocols, certain hardware. **Skip explicitly** for engineering-ergonomics topics (rate limiting, form architecture, CRUD scaffolding, build tooling, UI patterns) — note the skip in one line and move on.
 
 If the topic qualifies:
-- WebSearch `arxiv.org` and `scholar.google.com` with the canonical topic name. Add `survey` or `review` as a query term to surface consolidating papers.
+- WebSearch `arxiv.org` and `scholar.google.com` using the working problem frame and applicable research lanes. Add `survey` or `review` as a query term to surface consolidating papers.
 - Identify 1-3 papers that introduce or canonicalize the technique. Signals: high citation count, "X is all you need" / seminal-paper framing, recent survey papers that point to a small set of foundational works.
 - WebFetch the abstract and the relevant section. Capture verbatim: title, authors, year, URL, the load-bearing claim or result.
 - **Recurring citation across multiple papers or surveys is the strongest signal.** A single paper with no follow-up is weaker — note it but don't anchor a phase on it.

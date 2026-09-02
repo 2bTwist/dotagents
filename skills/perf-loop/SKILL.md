@@ -1,6 +1,6 @@
 ---
 name: perf-loop
-description: Diff-driven autonomous browser test + performance optimization loop for serious React/web implementation. Invoke deliberately (alongside /implement) when a design is settled and you want a change driven to an EXCELLENT bar — not while prototyping. It reads the git diff, generates targeted end-to-end user flows for what changed, drives them in a real browser, detects perf hitches + weird behavior, fixes them, and re-runs until budgets pass — stopping only at the budget or a severe tradeoff it escalates. Triggers "run the perf loop", "optimize until excellent", "perf-loop this", "test this PR in the browser".
+description: Drive a settled web change to a passing perf budget — read the git diff, generate browser flows targeting what changed, run them against a throttled prod build, fix what hitches, repeat until budgets pass or a tradeoff needs escalating. Invoke deliberately once a design is settled, alongside /implement, never while prototyping. Needs the harness perf-harness-init installs.
 harness:
   degrades: [subagents, mcp-browser]
 ---
@@ -10,7 +10,7 @@ harness:
 An invokable "we mean it now" state, not a prototyping aid. Requires the harness
 (run `perf-harness-init` first if absent). No third-party browser-testing tool —
 uses the agent + Playwright + the `mcp__MCP_DOCKER__browser_*` tools + our
-`perf-check` verifier. Design: portfolio `specs/plans/2026-06-22-groundwork-perf-harness.md`.
+`perf-check` verifier.
 
 ## Preconditions (stop if missing)
 1. `budgets.json` calibrated (non-null budgets) — else run `pnpm perf:calibrate`.
@@ -39,7 +39,15 @@ uses the agent + Playwright + the `mcp__MCP_DOCKER__browser_*` tools + our
   - visual/a11y: layout shift, contrast, dead links, missing metadata
 
 ### 3. Gate
-- `verdict==="pass"` AND invariants green AND no anomalies AND no cheap win toward `target` → **DONE**. Report final numbers + diff.
+
+**DONE** when all four boxes check. Any unchecked box → step 4.
+
+- [ ] `pnpm perf:check --json` returns `verdict === "pass"` — every budget in `budgets.json` met.
+- [ ] Functional e2e + a11y invariants green.
+- [ ] Every anomaly from step 2's three lists is either fixed or written up as a severe tradeoff.
+- [ ] No **cheap win** left: a fix touching one file, changing no API, risking no invariant, that this run's measurement says would move a metric.
+
+On DONE, report the final numbers against each budget, plus the diff.
 
 ### 4. Diagnose → fix → re-verify
 - Pick the worst metric/anomaly. Read the CPU profile (`perf-results/*.cpuprofile`) / console / network to find the cause.
@@ -47,10 +55,13 @@ uses the agent + Playwright + the `mcp__MCP_DOCKER__browser_*` tools + our
 - Re-run invariants; if a fix breaks one, revert it and try another approach. Loop.
 
 ## Stop / escalate
-- **Done:** budgets pass + invariants green + no anomalies.
-- **Severe tradeoff:** the only path to budget breaks an invariant or needs a UX sacrifice → STOP, write `specs/perf/<date>-<slug>-tradeoff.md` (metric, blocker, options + UX cost, recommendation), escalate. Do not proceed.
-- **Cap:** stop after N iterations (default 8) or the token/time ceiling; escalate with best-achieved numbers + smallest remaining gap. Never silently accept "good enough."
+
+Three exits, and no fourth:
+
+- **Done:** the step-3 gate, all four boxes.
+- **Severe tradeoff:** the only path to a budget breaks an invariant or costs UX → STOP, write `specs/perf/<date>-<slug>-tradeoff.md` (metric, blocker, options + UX cost, recommendation), escalate. Do not proceed.
+- **Cap:** 8 iterations of step 4. On the 8th, stop and escalate with the best-achieved number and the remaining gap for each failing budget. Never silently accept "good enough."
 
 ## Measurement honesty
-- "Excellent" is per-layer: sub-µs hot fns, sub-frame (~<100ms) INP, sub-1s LCP. Don't chase nanoseconds on CWV (impossible → non-terminating loop).
+- **Budgets terminate the loop; "excellent" only ranks what to fix next.** The per-layer bar is sub-µs hot fns, sub-frame (~<100ms) INP, sub-1s LCP. Chasing a metric past its budget is how this loop fails to end.
 - A suspiciously big win is a measurement bug until reproduced from a clean prod build (Twyman's law).

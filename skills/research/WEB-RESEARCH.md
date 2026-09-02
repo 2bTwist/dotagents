@@ -1,6 +1,6 @@
 # Web research branch
 
-Answer an external-world question with sources that survive an AI-polluted web. Design rationale is grounded in a rigor investigation of how research agents fail (see `specs/rigor/2026-07-19-how-ai-agents-research-quality.md` in the research project): agents default to search-ranked content, search ranking is an adversarial surface, citation presence is not citation correctness, and syndication makes many URLs share one origin. Every rule below exists to counter one of those.
+Answer an external-world question with sources that survive an AI-polluted web. Four ways research agents fail, each the reason for a rule below: they default to search-ranked content, search ranking is an adversarial surface, citation presence is not citation correctness, and syndication makes many URLs share one origin.
 
 Proportionality rule: this is a research run, not a bibliography exercise. Links fall out for free; formal verification applies only to load-bearing claims (numbers, contested points, anything the user will act on). A pure "map how X works" run returns findings with links and stops there.
 
@@ -12,7 +12,7 @@ Break the question into sub-questions. For each, note in one line what would cou
 
 ### 2. Retrieve via mapping sub-agents
 
-Spawn parallel mapping sub-agents (`model: sonnet`, always explicit). Pass them this tool order verbatim: prefer `searxng` MCP for multi-source search, built-in WebSearch as fallback; WebFetch for known URLs; `cloudflare-browser` MCP for JS-heavy, paywalled, or bad fetches.
+Spawn parallel mapping sub-agents (`model: sonnet`, always explicit). Pass them this tool order verbatim, naming only the tools this harness actually has: a self-hosted metasearch MCP (`searxng`) for multi-source search, built-in WebSearch as fallback; WebFetch for known URLs; a remote-browser MCP (`cloudflare-browser`) for JS-heavy, paywalled, or bad fetches.
 
 Tier discipline, per load-bearing sub-question:
 

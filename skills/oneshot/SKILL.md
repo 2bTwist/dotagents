@@ -15,11 +15,16 @@ Execute immediately — no preamble, start with the first grep/read/edit. Pause 
 
 ## Steps
 
-1. **Locate.** Grep/Glob/LS to the exact file(s). If the target isn't obvious within a few searches, STOP — not one-shot material; offer `/research` or `/plan`.
+1. **Locate.** Grep/Glob/LS to the exact file(s). Three searches is the budget: if the target is still not pinned to a `file:line` after the third, STOP — not one-shot material; offer `/research` or `/plan`.
 2. **Read fully** (no `limit`/`offset`) the target and any close neighbour (import, type definition).
-3. **Safety check before editing.** Grep the symbol for other affected sites; check for tests pinning the behaviour; check for a hidden invariant. If any answer surprises you, STOP → `/plan`.
+3. **Safety check before editing.** Grep the symbol repo-wide, and answer all three:
+   - How many other call sites are there? **More than two → STOP → `/plan`.**
+   - Does a test pin this behaviour? **Yes → the test is the spec; if the fix changes what it asserts, STOP → `/plan`.**
+   - Is there an invariant here the change could break (a null guard, an ordering assumption, a cached value)? **Yes → STOP → `/plan`.**
+
+   Three clean answers is the only way past this step.
 4. **Edit.** Minimal diff. No unrelated cleanup, no drive-by refactor.
-5. **Verify.** Run the smallest relevant check (type check / lint / targeted test, or the project's single check command). If the fix turns non-obvious, STOP → `/plan`.
+5. **Verify.** Run the smallest relevant check (type check / lint / targeted test, or the project's single check command). One attempt to fix a failure it surfaces; a second failure means the cause was not what you thought — STOP → `/plan`.
 6. **Report.** What changed (`file:line`), what you verified, and anything you noticed but deliberately left untouched.
 
 ## Guardrails

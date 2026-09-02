@@ -1,10 +1,32 @@
 # Reference catalog
 
-Deeper sources behind SKILL.md. Reach for these during **Propose**, when a direction needs
-grounding, or when a specific problem (motion performance, accessible combobox, layout
-mechanics) needs a primary source rather than a principle.
+Sources behind SKILL.md. Reach for these during **Propose**, to ground a direction in
+someone who does it well, and when a specific problem (motion performance, accessible
+combobox, layout mechanics) needs a primary source rather than a principle.
 
 All URLs verified live as of 2026-07-27.
+
+## People, by what to reach for them for
+
+| Person | For | Source |
+|---|---|---|
+| Rauno Freiberg, Vercel | Interface guidelines, invisible interaction details | interfaces.rauno.me, rauno.me/craft, devouringdetails.com |
+| Benji Taylor, Family | Simplicity, fluidity, delight; spatial physics of product surfaces | benji.org/family-values |
+| Emil Kowalski, ex-Vercel | Taste as trained instinct, animation restraint | emilkowal.ski, animations.dev |
+| Dmytro (pqoqubbw), Mintlify | Animated icons, micro-interaction craft | pqoqubbw.dev, github.com/pqoqubbw/icons |
+| Paco Coursey, Linear | Component API craft, keyboard-first components | paco.me, cmdk, next-themes |
+| Kathryn Gonzalez, ex-DoorDash | What the role is: autonomy, craft, final fidelity | ryngonzalez.com/blog/the-attributes-of-a-design-engineer |
+| Vercel DE team | Outcomes over process, prototype in code | vercel.com/blog/design-engineering-at-vercel |
+| Steve Ruiz, tldraw | Direct-manipulation physics: dragging, rotation, z-order | steveruiz.me ("Perfect Dragging") |
+| Jakub Krehel | Component-level craft details, typography, color | jakub.kr, interfaces.dev |
+| Matt Perry, Motion | Why animation is fast or janky; hover/pointer mechanics | motion.dev/magazine |
+| Andy Allen, Not Boring | Game-feel and sound applied to product UI | notbor.ing |
+| Josh Comeau | Whimsy, novelty budget, CSS mechanics | joshwcomeau.com |
+| Ahmad Shadeed | CSS layout mechanics, deeply diagrammed | ishadeed.com |
+| Amelia Wattenberger | Rethinking interaction primitives, data viz | wattenberger.com |
+| Jhey Tompkins | Creative CSS techniques | craftofui.com |
+| Bret Victor | The ancestor this whole circle cites | worrydream.com ("Magic Ink") |
+| Directories | Finding more practitioners, staying current | ui.land (by Emil), desengs.com, designengineering.arun.is |
 
 ## Foundational essays still actively cited
 

@@ -8,8 +8,9 @@ declared, which frontmatter keys to strip) lives in `install.d/<target>.sh` and 
 split is the whole point: before it existed, the same skills were maintained as three hand-copied
 forks that drifted apart in content, not just in frontmatter.
 
-The methodology is context engineering: plan in short compacted artifacts, let sub-agents do heavy
-reading in forked context, keep the human reviewing at the highest-leverage point.
+The methodology is context engineering: create durable artifacts only when the workflow calls for
+them, let sub-agents do heavy reading in forked context, and keep the human reviewing at the
+highest-leverage point.
 
 Open source under MIT. Fork it, adapt it, or drop it in as-is.
 
@@ -31,6 +32,7 @@ each harness afterwards.
 | `--list` | Print what would install where, and what is skipped and why. Writes nothing. |
 | `--dry-run` | Run the full install path, write nothing. |
 | `--force` | Overwrite files that already exist. Without it, existing files are left alone. |
+| `--instructions-only` | Update the managed instructions block and references without touching skills, agents, or optional packages. |
 | `--symlink` | Link skills instead of copying them, so repo edits apply live. Agents are still written out, and frontmatter is not rewritten. |
 | `--with-optional` | Also install `optional/` packages. |
 
@@ -73,7 +75,7 @@ the second was emptied on purpose to keep Pi's system prompt small.
 | `plan` | Turn a task into a decision-complete phased plan with per-phase verification. |
 | `implement` | Execute a plan phase by phase, dispatching a phase's independent parts in parallel, pausing for manual verification between phases. |
 | `oneshot` | Escape hatch for small contained tasks, with guardrails against scope creep. |
-| `compact` | Mid-session compaction to a handoff file, so work resumes in a fresh session with nothing lost. |
+| `compact` | Create a handoff file when the user explicitly requests one. |
 | `rigor` | Gate an investigation or benchmark behind grounded method, then try to refute it. |
 | `agent-latency-audit` | Attribute an agent session's wall-clock time across inference, tool execution, approval waits, and external processes. |
 | `design-engineering` | Design direction and taste for UI work, applied before markup rather than after. |
@@ -108,10 +110,27 @@ Only the block is replaced. Anything you hand-wrote outside it survives every la
 harness also gets a preamble from `instructions/preamble/<target>.md`, seeded once above the block
 and never overwritten, which is where harness quirks get added by hand.
 
-Machine-specific details (tool inventories, local paths, hardware) belong in
-`instructions/references/*.local.md`, which is gitignored. A clone carries only
-`instructions/references/README.md` describing the convention. This keeps `core.md` portable: it
-refers to local references by role, so it renders identically on any machine.
+Detailed portable procedures live in tracked files under `instructions/references/`.
+Machine-specific details such as tool inventories, local paths, and hardware belong in
+`instructions/references/*.local.md`, which is gitignored. The installer copies both kinds beside
+the rendered instructions. This keeps `core.md` portable and short while preserving detail on
+demand.
+
+### Installed-configuration state
+
+dotagents owns canonical source instructions, adapters, skills, agents, and portable references.
+An installation creates derived configuration in each selected harness. The managed instruction block
+and installed references are installer-owned and replaced from canonical source; user-authored content
+outside the managed block and seeded preamble is preserved.
+
+`--instructions-only` changes only that managed instruction block and references. It does not install,
+replace, or remove skills, agents, or optional packages. Local `*.local.md` references may be installed
+but remain machine-owned, gitignored, and must not contain secrets.
+
+There is no transactional install, durable format migration, backup, or automatic rollback. An
+interrupted or incompatible install can leave mixed derived configuration. Recover by inspecting the
+selected harness, rerunning the scoped installer from reviewed canonical source, and using the install
+and instruction smoke suites. Do not treat installed state as authority when it conflicts with source.
 
 ### Optional packages
 
@@ -124,10 +143,32 @@ needs `hooks` and `slash-commands`, so it installs on Claude Code only. See
 `optional/autoresearch/UPSTREAM.md` for the pinned commit and which files are byte-identical to
 upstream.
 
-### Memory templates
+### Durable context hierarchy
 
-`memory-templates/` holds sample memory files for seeding a per-project memory directory. The
-installer does not touch them. Copy them by hand into a project when you want them.
+Corrections do not automatically become memory or repository instructions. Preserve one only when
+it has high safety or correctness risk, has recurred, expresses an enduring product value or safety
+boundary, or exposes a structural problem likely to recur.
+
+Promote qualifying guidance to the strongest available control, in this order: architecture or data
+structures; constraints or types; lint, tests, or CI; lean `AGENTS.md`; a curated local reference or
+procedure; otherwise the transcript only. Point-in-time task state stays in the transcript unless
+the user explicitly requests a handoff or another durable record.
+
+Machine-specific, secret-free, verifiable, and date-sensitive operational detail belongs in the
+gitignored `instructions/references/*.local.md` files. Current external facts should be queried from
+their authoritative source rather than copied into standing instructions.
+
+### Repository context adapters
+
+For a repository you own, the default context shape is a canonical `AGENTS.md` plus a thin
+`CLAUDE.md` that imports it with `@AGENTS.md`. Apply that shape when the repository is created or
+first audited. Derive its durable rules from current repository evidence rather than archived agent
+memory.
+
+Do not modify external repositories or repositories whose ownership is uncertain. Ownership
+classification fails closed: leave the repository unchanged and ask the user. Preserve all
+pre-existing dirty and untracked work, and keep harness-specific additions in the thin adapter only
+when they cannot be shared.
 
 ## Capability gating
 
@@ -200,7 +241,7 @@ talk to the agent for small tweaks. The full loop is for hard problems, not ever
 
 ## Philosophy
 
-1. **Frequent intentional compaction.** Keep context lean; compact to disk when it fills.
+1. **Selective durability.** Keep context lean without automatically copying task state to disk.
 2. **Sub-agents are for context control, not role-play.** They fork to read and return a compressed answer.
 3. **Research documents what IS, not what SHOULD BE.** Recommendations pollute the plan phase.
 4. **Read files fully.** Partial reads cause hallucinated plans.
@@ -208,17 +249,24 @@ talk to the agent for small tweaks. The full loop is for hard problems, not ever
 
 ## Verify
 
-Three suites, each resolving the repo root from its own location rather than the working directory:
+Five suites, each resolving the repo root from its own location rather than the working directory:
 
 ```bash
 ./test/install-smoke.sh        # installer, adapters, capability gating
 ./test/instructions-smoke.sh   # managed block, preambles, references
+./test/global-instructions-pruning-smoke.sh # global policy behavior and prompt-size budget
+./test/repository-adapter-smoke.sh # local Codex repository-instruction ingestion
 ./test/optional-smoke.sh       # optional package contract
 shellcheck -S warning install.sh install.d/*.sh optional/*/install.sh test/*.sh
 ```
 
 The suites assert installed state against the canonical source, which is an oracle derived from the
 requirement rather than from the installer's own behavior.
+
+Claude Code has no offline prompt-input inspector. Run
+`./test/repository-adapter-smoke.sh --manual-claude` from an authenticated environment when
+requalifying Claude's `CLAUDE.md` import behavior. That opt-in path contacts a model; the default
+suite does not.
 
 ## Customize
 

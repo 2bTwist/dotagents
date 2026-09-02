@@ -1,27 +1,19 @@
 ---
 name: animation-vocabulary
-description: Reverse-lookup glossary for NAMING a motion effect precisely (transitions, springs, easing, scroll effects) when discussing or critiquing animation. For designing, building, or reviewing motion, use emil-design-eng instead. Source: animations.dev/vocabulary (Emil Kowalski).
+description: Glossary for NAMING a motion effect precisely — entrances, sequencing, transforms, transitions, scroll, easing, springs, performance. Use when putting an animation into words, either to spec it or to critique one. For deciding what the motion should be, use design-engineering.
 ---
 
-# Animation vocabulary + principles
+# Animation vocabulary
 
-A precise shared language for motion, so "make it smoother" becomes "ease-out, ~220ms, scale-in with a slight pop." Use it both ways: to NAME what an interface should do, and to CRITIQUE what it does.
+A precise shared language for motion, so "make it smoother" becomes "ease-out, ~220ms, scale-in with a slight pop." This is a naming tool. What the motion *should* be is a design decision — `design-engineering` owns that.
 
-Source: [animations.dev/vocabulary](https://animations.dev/vocabulary) (Emil Kowalski). This file is the offline reference.
+Offline copy of [animations.dev/vocabulary](https://animations.dev/vocabulary) (Emil Kowalski), extended.
 
-## How to use this skill
+## Writing a motion spec
 
-When designing, discussing, or reviewing any animation:
-
-1. **Name the technique** with the vocabulary below instead of vague terms. "Shared element transition," not "the thing where it grows."
-2. **Specify every animation** by: **trigger** (what starts it), **duration or spring** (how long / what physics), **easing** (the curve), **what changes** (which transform/opacity/property), and **purpose** (what it communicates). An animation you can't spec on these five is probably decoration.
-3. **Apply the principles**, not just the verbs. The defaults that almost always hold:
-   - **Ease-out by default** for UI and anything responding to the user. Reserve ease-in-out for on-screen A-to-B moves. Avoid ease-in and linear (except spinners/marquees).
-   - **Animate `transform` and `opacity`**, not `width/height/top/left` — the GPU compositing path, no layout thrashing.
-   - **Springs for interruptible / gesture-driven motion** (they carry velocity); timed easing for discrete enter/exit.
-   - **Respect `prefers-reduced-motion`** — tone down or remove, keep the state change.
-   - **Frequency of use:** the more often it's seen, the shorter and subtler it should be.
-   - **Purposeful:** motion should orient, give feedback, or show relationships, never decorate.
+1. **Name the technique** from the vocabulary below instead of a vague phrase. "Shared element transition," not "the thing where it grows."
+2. **Fill five slots:** **trigger** (what starts it), **duration or spring** (how long / what physics), **easing** (the curve), **what changes** (which transform/opacity/property), **purpose** (what it communicates). An animation that cannot fill all five is decoration.
+3. **Check it against the [principles](#principles)** — a spec that names a technique but violates a default is still a bad spec.
 
 ## Vocabulary
 
@@ -129,16 +121,22 @@ When designing, discussing, or reviewing any animation:
 - **will-change:** a CSS hint that an element is about to animate, so the browser can promote it to its own layer ahead of time.
 - **Layout thrashing:** animating width/height/top/left forces layout recalculation every frame, causing jank.
 
-## Principles to know
-- **Purposeful animation:** motion should serve a function (orient, give feedback, show relationships), not decorate.
-- **Anticipation:** a small wind-up in the opposite direction before a move, hinting at what's about to happen.
+## Principles
+
+The defaults a spec has to argue its way out of, not merely satisfy:
+
+- **Purposeful animation:** motion orients, gives feedback, or shows a relationship. Nothing else earns a frame.
+- **Ease-out by default** for UI and anything responding to the user. Ease-in-out for on-screen A-to-B moves. Ease-in and linear are for spinners and marquees.
+- **Transform and opacity only.** `width/height/top/left` recalculate layout every frame; transform and opacity ride the GPU compositing path.
+- **Springs for interruptible or gesture-driven motion** — they carry velocity across the interruption. Timed easing for discrete enter/exit.
+- **Frequency of use:** the more often a user sees it, the shorter and subtler it gets.
+- **Reduced motion:** `prefers-reduced-motion` tones the motion down or removes it, and the state change still happens.
+- **Spatial consistency:** an element keeps its identity and position across states, so the user never loses track of where it went.
+- **Perceived performance:** the right animation makes an interface feel faster than it is.
+- **Anticipation:** a small wind-up opposite the move, hinting at what is about to happen.
 - **Follow-through:** parts keep moving and settle slightly after the main motion stops, adding weight.
-- **Squash & stretch:** deforming as it moves to convey weight, speed, and flexibility.
-- **Perceived performance:** the right animation makes an interface feel faster, even when it isn't.
-- **Frequency of use:** the more often a user sees an animation, the shorter and subtler it should be.
-- **Spatial consistency:** animate so an element keeps its identity and position across states, so users never lose track of where things went.
-- **Hardware acceleration:** animating transform and opacity lets the GPU keep motion smooth.
-- **Reduced motion:** respect `prefers-reduced-motion` by toning down or removing motion.
+- **Squash & stretch:** deforming as it moves conveys weight, speed, and flexibility.
 
 ## Stack note
-The terms are platform-agnostic. Map them to the stack at hand: web = CSS transitions/keyframes + WAAPI or Motion/Framer Motion; React Native = Reanimated (`withTiming`/`withSpring`, `useAnimatedStyle`, gesture-handler). The principles (ease-out default, transform/opacity only, springs for interruptible motion, reduced-motion) hold across all of them.
+
+The terms are platform-agnostic. Map them to the stack at hand: web is CSS transitions/keyframes plus WAAPI or Motion; React Native is Reanimated (`withTiming`/`withSpring`, `useAnimatedStyle`, gesture-handler).

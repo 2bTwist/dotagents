@@ -1,6 +1,6 @@
 ---
 name: rigor
-description: Gate an investigation, benchmark, or claim behind grounded engineering method, then refute it. User-invoked.
+description: Gate an investigation, benchmark, or claim behind grounded engineering method, then refute it.
 disable-model-invocation: true
 model: opus
 harness:
@@ -57,9 +57,9 @@ Do the work against the locked design. Change one variable at a time. Record wha
 
 ### 4. ATTACK, spawn the adversary
 
-Spawn a forked Task sub-agent to **refute** the result. Give it the doc path, the result, and the in-play branch of `FRAMEWORKS.md`. Use this prompt verbatim:
+Spawn a forked Task sub-agent to **refute** the result. Give it the doc path, the result, and the in-play branch of `FRAMEWORKS.md`. A sub-agent starts in a fresh context and cannot resolve `FRAMEWORKS.md` relative to this file, so substitute `<frameworks-path>` with the absolute path of the `FRAMEWORKS.md` sitting beside this SKILL.md — the skill install root differs per harness, so read it off this file's own location rather than assuming one. Otherwise use this prompt verbatim:
 
-> You are an adversarial reviewer. Your job is to REFUTE the conclusion in this rigor doc, not to bless it. Default to "this is not yet grounded" and make the work prove otherwise. Using the gate/attack checks in `~/.claude/skills/rigor/FRAMEWORKS.md` (shared spine + the `<class>` branch), produce a list of challenges. For each: the specific claim or result attacked, the check it fails, and why. Only HIGH-SIGNAL challenges, a result that is definitely wrong, a metric that definitely doesn't represent the goal, an "established" claim with no source, a win not reproduced from clean, a conclusion with no competing hypothesis ruled out. Do NOT flag style, taste, or input-dependent maybes. If you are not certain a challenge is real, drop it. Return the surviving challenges; if none survive, say so and state which checks you ran.
+> You are an adversarial reviewer. Your job is to REFUTE the conclusion in this rigor doc, not to bless it. Default to "this is not yet grounded" and make the work prove otherwise. Using the gate/attack checks in `<frameworks-path>` (shared spine + the `<class>` branch), produce a list of challenges. For each: the specific claim or result attacked, the check it fails, and why. Only HIGH-SIGNAL challenges, a result that is definitely wrong, a metric that definitely doesn't represent the goal, an "established" claim with no source, a win not reproduced from clean, a conclusion with no competing hypothesis ruled out. Do NOT flag style, taste, or input-dependent maybes. If you are not certain a challenge is real, drop it. Return the surviving challenges; if none survive, say so and state which checks you ran.
 
 Then **validate** each returned challenge yourself against the doc/code (flag→validate→filter): keep only the ones that hold with high confidence, drop false positives. Write the survivors (or a justified clean pass) into Pass 2 "Adversarial verdict," and resolve each, fix the work, downgrade the claim, or record why it stands.
 

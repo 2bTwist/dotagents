@@ -40,6 +40,10 @@ Present the overview and the phase list (each phase's name + what it accomplishe
 
 Write to `specs/plans/YYYY-MM-DD-<kebab-slug>.md` (create `specs/plans/` if needed), following the structure in [`PLAN-TEMPLATE.md`](PLAN-TEMPLATE.md).
 
+Done when every phase carries all three: the file paths it touches, the **exact commands** for its automated success criteria, and the manual items a human must check. A phase whose success criteria are prose rather than a command is not decision-complete — `/implement` cannot run it.
+
 ### 5. Review
 
-Point the user at the draft. Ask whether the phases are scoped right and the success criteria are specific enough, then iterate in place until they're satisfied.
+Point the user at the draft and ask two questions: are the phases scoped right, and is any success criterion still too vague to run. Edit in place for each answer.
+
+Done when the user's last round raised no change. Their silence is not agreement — ask.

@@ -1,15 +1,16 @@
-# Local references
+# Instruction references
 
-`../core.md` is shared and public. It refers to machine detail by role, never by path, so that a
-stranger cloning this repo gets working guidance and your machine keeps its specifics.
+`../core.md` is shared and public. Portable procedures that are too detailed for the system prompt
+live here as tracked Markdown files. Machine-specific detail also lives here, but only in files
+named `*.local.md`.
 
-The specifics live here, in files named `*.local.md`. They are gitignored and never committed. The
-installer copies them to `<harness-root>/references/` alongside the rendered instructions, so every
-harness you install into sees the same local detail.
+Local files are gitignored and never committed. The installer copies both portable and local
+references to `<harness-root>/references/` alongside the rendered instructions.
 
 ## The convention
 
-- One file per topic. Prefix with a number to control read order: `10-tools.local.md`,
+- One file per topic. Portable references use descriptive names. Prefix local files with a number
+  to control read order: `10-tools.local.md`,
   `20-machine.local.md`.
 - Write them for on-demand reading, not for the system prompt. `core.md` names the role
   ("read your environment-fixes reference"); the agent opens the file when the topic comes up.

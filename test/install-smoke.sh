@@ -38,6 +38,8 @@ REPO_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
 INSTALLER="$REPO_ROOT/install.sh"
 SKILLS_DIR="$REPO_ROOT/skills"
 AGENTS_DIR="$REPO_ROOT/agents"
+CORE_MD="$REPO_ROOT/instructions/core.md"
+HIGH_RISK_MD="$REPO_ROOT/instructions/references/high-risk-engineering.md"
 
 PASS=0
 FAIL=0
@@ -71,6 +73,7 @@ need_cmd() {
 need_cmd jq
 need_cmd python3
 need_cmd shasum
+need_cmd cmp
 
 [[ -d "$SKILLS_DIR" ]] || die "canonical skills tree not found at $SKILLS_DIR"
 [[ -d "$AGENTS_DIR" ]] || die "canonical agents tree not found at $AGENTS_DIR"
@@ -376,6 +379,73 @@ agent_artifact_path() {
   esac
 }
 
+# These locations are part of the target adapters' public installation
+# contract. Keep them independent from install.sh so --instructions-only
+# cannot pass by merely agreeing with the implementation under test.
+instructions_dest_path() {
+  local target="$1" home="$2" dest="$3"
+  case "$target" in
+    claude) printf '%s/.claude/CLAUDE.md' "$home" ;;
+    codex)  printf '%s/.codex/AGENTS.md' "$home" ;;
+    pi)     printf '%s/.pi/agent/AGENTS.md' "$home" ;;
+    agents) printf '%s/AGENTS.md' "$dest" ;;
+  esac
+}
+
+references_dir_path() {
+  local target="$1" home="$2" dest="$3"
+  case "$target" in
+    claude) printf '%s/.claude/references' "$home" ;;
+    codex)  printf '%s/.codex/references' "$home" ;;
+    pi)     printf '%s/.pi/agent/references' "$home" ;;
+    agents) printf '%s/references' "$dest" ;;
+  esac
+}
+
+skill_root_path() {
+  local target="$1" home="$2" dest="$3"
+  case "$target" in
+    claude) printf '%s/.claude/skills' "$home" ;;
+    codex)  printf '%s/.codex/skills' "$home" ;;
+    pi)     printf '%s/.pi/agent/skills' "$home" ;;
+    agents) printf '%s/skills' "$dest" ;;
+  esac
+}
+
+agent_root_path() {
+  local target="$1" home="$2" dest="$3"
+  case "$target" in
+    claude) printf '%s/.claude/agents' "$home" ;;
+    codex)  printf '%s/.codex/agents' "$home" ;;
+    pi|agents) printf '%s' "$(skill_root_path "$target" "$home" "$dest")" ;;
+  esac
+}
+
+extract_managed_block() {
+  local file="$1"
+  [[ -f "$file" ]] || return 0
+  awk '
+    $0 == "<!-- BEGIN dotagents (managed) - edits below are overwritten on install -->" { in_block=1; next }
+    $0 == "<!-- END dotagents -->" { in_block=0; next }
+    in_block { print }
+  ' "$file"
+}
+
+# unexpected_payload_files ROOT INSTRUCTIONS REFERENCES
+# Emits files not in the allowed instructions file or reference subtree. A
+# fresh HOME/dest makes any emitted path an unauthorized skill, agent, or
+# optional-package write during --instructions-only.
+unexpected_payload_files() {
+  local root="$1" instructions="$2" references="$3" file
+  [[ -d "$root" ]] || return 0
+  while IFS= read -r file; do
+    case "$file" in
+      "$instructions"|"$references"/*) ;;
+      *) printf '%s\n' "$file" ;;
+    esac
+  done < <(find "$root" -type f -print 2>/dev/null)
+}
+
 snapshot_tree() {
   local dir="$1"
   if [[ ! -d "$dir" ]]; then
@@ -386,6 +456,17 @@ snapshot_tree() {
     find "$dir" -mindepth 1 \( -type d -o -type f \) 2>/dev/null | sort
     find "$dir" -type f -print0 2>/dev/null | sort -z | xargs -0 shasum -a 256 2>/dev/null
   } | shasum -a 256 | awk '{print $1}'
+}
+
+reference_manifest() {
+  local dir="$1" ref rel digest
+  [[ -d "$dir" ]] || { printf 'NO_SUCH_DIR'; return; }
+  for ref in "$dir"/*.md; do
+    [[ -f "$ref" ]] || continue
+    rel="${ref##*/}"
+    digest="$(shasum -a 256 "$ref" | awk '{print $1}')"
+    printf '%s  %s\n' "$digest" "$rel"
+  done
 }
 
 run_installer() {
@@ -631,7 +712,63 @@ PYEOF
     fi
   fi
 
-  # --- Sub-test C: re-run without --force is a no-op success --------------
+  # --- Sub-test C: --instructions-only writes only instructions/references -
+
+  home3="$(new_home)"
+  dest3=""
+  [[ "$target" == "agents" ]] && dest3="$(new_dest)"
+  instructionsOnlyFile="$(instructions_dest_path "$target" "$home3" "$dest3")"
+  instructionsOnlyRefs="$(references_dir_path "$target" "$home3" "$dest3")"
+  instructionsOnlySkills="$(skill_root_path "$target" "$home3" "$dest3")"
+  instructionsOnlyAgents="$(agent_root_path "$target" "$home3" "$dest3")"
+
+  run_installer "$target" "$home3" "$dest3" --instructions-only
+  instructionsOnlyRc="$RC"
+
+  if [[ "$instructionsOnlyRc" -eq 0 ]]; then
+    pass "--instructions-only exits 0 for $target"
+  else
+    fail "--instructions-only exits 0 for $target (expected 0, got $instructionsOnlyRc; output: $(printf '%s' "$OUT" | tail -5 | tr '\n' '|'))"
+  fi
+
+  instructionsOnlyBlock="$TMP_ROOT/instructions-only.$target"
+  extract_managed_block "$instructionsOnlyFile" >"$instructionsOnlyBlock"
+  if [[ -f "$CORE_MD" ]] && cmp -s "$instructionsOnlyBlock" "$CORE_MD"; then
+    pass "--instructions-only updates $target's managed instructions from instructions/core.md"
+  else
+    fail "--instructions-only updates $target's managed instructions from instructions/core.md (managed block missing or differs)"
+  fi
+
+  if [[ -f "$HIGH_RISK_MD" ]] && cmp -s "$HIGH_RISK_MD" "$instructionsOnlyRefs/high-risk-engineering.md"; then
+    pass "--instructions-only updates $target's portable high-risk reference byte-identically"
+  else
+    fail "--instructions-only updates $target's portable high-risk reference byte-identically (expected $instructionsOnlyRefs/high-risk-engineering.md to match canonical source)"
+  fi
+
+  if [[ ! -e "$instructionsOnlySkills" ]]; then
+    pass "--instructions-only makes zero skill writes for $target"
+  else
+    fail "--instructions-only makes zero skill writes for $target (unexpected path exists: $instructionsOnlySkills)"
+  fi
+
+  if [[ ! -e "$instructionsOnlyAgents" ]]; then
+    pass "--instructions-only makes zero agent writes for $target"
+  else
+    fail "--instructions-only makes zero agent writes for $target (unexpected path exists: $instructionsOnlyAgents)"
+  fi
+
+  unexpectedHomePayload="$(unexpected_payload_files "$home3" "$instructionsOnlyFile" "$instructionsOnlyRefs")"
+  unexpectedDestPayload=""
+  if [[ "$target" == "agents" ]]; then
+    unexpectedDestPayload="$(unexpected_payload_files "$dest3" "$instructionsOnlyFile" "$instructionsOnlyRefs")"
+  fi
+  if [[ -z "$unexpectedHomePayload" && -z "$unexpectedDestPayload" ]]; then
+    pass "--instructions-only makes zero optional-package or other payload writes for $target"
+  else
+    fail "--instructions-only makes zero optional-package or other payload writes for $target (unexpected files: $unexpectedHomePayload $unexpectedDestPayload)"
+  fi
+
+  # --- Sub-test D: re-run without --force is a no-op success --------------
 
   if [[ "$expected_count" -eq 0 ]]; then
     echo "SKIP [$GROUP] idempotency re-run not applicable: $target installs 0 skills (rule 7 already governs exit code)"
@@ -660,6 +797,62 @@ PYEOF
     fi
   fi
 done
+
+# ---------------------------------------------------------------------------
+# A symlink install followed by a forced copy install must replace the
+# references link itself. It must never remove files through that link.
+# ---------------------------------------------------------------------------
+
+group "references symlink-to-copy transition"
+
+transition_home="$(new_home)"
+transition_dest="$(new_dest)"
+source_references="$REPO_ROOT/instructions/references"
+installed_references="$transition_dest/references"
+source_manifest_before="$(reference_manifest "$source_references")"
+
+[[ -n "$source_manifest_before" && "$source_manifest_before" != "NO_SUCH_DIR" ]] \
+  || die "canonical reference manifest is empty"
+
+run_installer agents "$transition_home" "$transition_dest" --symlink
+symlink_install_rc="$RC"
+
+if [[ "$symlink_install_rc" -eq 0 ]] \
+   && [[ -L "$installed_references" ]] \
+   && [[ "$(readlink "$installed_references")" == "$source_references" ]]; then
+  pass "--symlink installs references as a link to the canonical source directory"
+else
+  fail "--symlink installs references as a link to the canonical source directory"
+fi
+
+run_installer agents "$transition_home" "$transition_dest" --force
+copy_install_rc="$RC"
+source_manifest_after="$(reference_manifest "$source_references")"
+installed_manifest_after="$(reference_manifest "$installed_references")"
+
+if [[ "$copy_install_rc" -eq 0 ]]; then
+  pass "copy-mode reinstall with --force exits 0"
+else
+  fail "copy-mode reinstall with --force exits 0 (expected 0, got $copy_install_rc)"
+fi
+
+if [[ "$source_manifest_after" == "$source_manifest_before" ]]; then
+  pass "copy-mode reinstall leaves canonical reference files and hashes unchanged"
+else
+  fail "copy-mode reinstall leaves canonical reference files and hashes unchanged"
+fi
+
+if [[ -d "$installed_references" && ! -L "$installed_references" ]]; then
+  pass "copy-mode reinstall replaces the references symlink with a real directory"
+else
+  fail "copy-mode reinstall replaces the references symlink with a real directory"
+fi
+
+if [[ "$installed_manifest_after" == "$source_manifest_before" ]]; then
+  pass "copy-mode reinstall leaves installed reference files byte-identical"
+else
+  fail "copy-mode reinstall leaves installed reference files byte-identical"
+fi
 
 # ---------------------------------------------------------------------------
 # Summary

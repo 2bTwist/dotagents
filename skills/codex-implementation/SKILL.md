@@ -5,7 +5,7 @@ description: Delegate a scoped, well-specified code change to Codex CLI (the Ope
 
 # Codex implementation
 
-Adapted from Theo's (t3.gg) Fable-plus-Codex setup. Codex implements; Claude scopes the task, reviews the diff, checks verification, and owns the result. `~/.codex/AGENTS.md` already carries Edmond's global conventions, so Codex follows them.
+Codex implements; Claude scopes the task, reviews the diff, checks verification, and owns the result. `~/.codex/AGENTS.md` already carries the global conventions, so the prompt states the task, not the house style.
 
 Do not let Codex commit, push, deploy, or edit global config unless the user explicitly asked.
 
