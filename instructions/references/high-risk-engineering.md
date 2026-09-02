@@ -59,6 +59,22 @@ migrations, and realistic verification. Update it when the implemented model cha
   path. State every leg that remains undriven.
 - Treat unexpectedly good and unexpectedly bad measurements as possible harness or oracle defects.
   Reproduce them cleanly against a representative workload before drawing a conclusion.
+- Prefer injectable seams over mocks. Substitute the clock, allocator, filesystem, transport, or
+  syscall layer so real failure paths execute rather than an assertion about how a mock was
+  called. Loop the injection: fail the first allocation, then the second, and continue until the
+  operation completes without failing.
+- Test the deliverable, not only the source. A build that requires special flags to be testable
+  is not testing what ships. Do not assume the compiler, bundler, or minifier is correct.
+- Layer the oracles; each is blind to what the next finds. Coverage finds untaken branches.
+  Fuzzing finds inputs coverage never suggested, and high-coverage code is not thereby immune.
+  Differential and semantic checks find wrong answers that neither crash nor fail an assertion.
+  Adversarial review finds pathological inputs the others do not construct.
+- Do not treat test volume as waste. Test code larger than the source it covers is normal, and
+  code that exists only to make the system testable is a legitimate part of the deliverable.
+- Treat an agent-found defect as high-value evidence and an agent-proposed fix as an unreviewed
+  hypothesis. Before accepting a fix that adds a limit, a fallback, or a retry, look for the
+  known solution to that problem class; the standard answer is often simpler and faster than the
+  workaround.
 - Never weaken a gate, narrow a workload, or redefine a metric merely to make a result pass.
 
 ## Close the work

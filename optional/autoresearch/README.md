@@ -17,7 +17,7 @@ hash appears, so there is nothing to keep in sync.
 Two reasons, and only the second one is about taste.
 
 The core content implements Dex Horthy's ACE-FCA methodology (research, plan,
-implement, compact). Autoresearch is a different pattern, Karpathy-style
+implement, handoff). Autoresearch is a different pattern, Karpathy-style
 autonomous optimization, and is not part of that workflow.
 
 More importantly it is not portable. It is not a skill, it is a skill plus a

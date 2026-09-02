@@ -75,7 +75,7 @@ the second was emptied on purpose to keep Pi's system prompt small.
 | `plan` | Turn a task into a decision-complete phased plan with per-phase verification. |
 | `implement` | Execute a plan phase by phase, dispatching a phase's independent parts in parallel, pausing for manual verification between phases. |
 | `oneshot` | Escape hatch for small contained tasks, with guardrails against scope creep. |
-| `compact` | Create a handoff file when the user explicitly requests one. |
+| `handoff` | Create a handoff file when the user explicitly requests one. |
 | `rigor` | Gate an investigation or benchmark behind grounded method, then try to refute it. |
 | `agent-latency-audit` | Attribute an agent session's wall-clock time across inference, tool execution, approval waits, and external processes. |
 | `design-engineering` | Design direction and taste for UI work, applied before markup rather than after. |

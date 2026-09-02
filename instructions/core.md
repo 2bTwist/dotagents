@@ -39,7 +39,8 @@ then use judgment. Silent deviation and mechanical compliance are both failures.
   version is the spec: read its docs, types, or source and heed deprecations.
 - **Prefer existing tools.** Use personal commands already on PATH and efficient CLIs
   before inventing scripts or equivalent MCP flows. Read local references on demand
-  for machine fixes, security posture, tool routing, and the local AI stack.
+  for machine fixes, security posture, tool routing, code comments, agent operations, and
+  the local AI stack.
 - **Keep scope deliberate.** Follow YAGNI. Optimize decisions for correctness,
   comprehension, maintainability, and scalability before implementation convenience.
 - **Repair the touched surface.** Fix exposed defects that affect the requested
@@ -81,6 +82,8 @@ then use judgment. Silent deviation and mechanical compliance are both failures.
   Have a separate agent author tests from the requirement, not the implementation.
   Confirm new tests fail against the missing or broken behavior, then keep them frozen
   while making them pass.
+- Absent a repository test policy, ask before the first test file there and record the answer;
+  never infer one from an existing suite.
 - Prefer behavior over interaction shape. Use realistic integration checks where mocks
   lie, especially for payments, networking, realtime systems, native bridges, and
   persistence.
@@ -97,10 +100,14 @@ then use judgment. Silent deviation and mechanical compliance are both failures.
   boundaries, consistency or concurrency semantics, or deployment topology. Compare
   alternatives, future costs, migration and reversal paths, then recommend one. Resume
   only after explicit user confirmation of that decision.
-- A stateful repository's local state contract must define authoritative and derived state, write and
-  transaction boundaries, invariants, failure and recovery behavior, retention and
-  deletion rules, migration rules, and realistic verification. Keep these facts in the
-  repository contract, not only in global instructions.
+- Design for testability before implementation; no confirmation needed, and it is not
+  retrofittable later. Prefer injectable seams over mocks: make the clock, filesystem, and
+  transport substitutable so real error paths execute. Test hooks may ship.
+- A repository's contract must define its test policy: what earns a test, when, and what is out of scope. A stateful
+  repository's contract must also define a state contract: authoritative and derived state, write
+  and transaction boundaries, invariants, failure and recovery behavior, retention and deletion rules, migration
+  rules, and realistic verification. Keep these facts in the repository contract, not only in
+  global instructions.
 
 ## Corrections and durable context
 
@@ -133,17 +140,7 @@ Load the relevant skill instead of reproducing its procedure here:
 - Small contained edits: `oneshot`.
 - UI or interaction work: `design-engineering` before markup. Use
   `animation-vocabulary` only when precise motion terminology is needed.
-- Explicit session handoff: `compact`.
-
-For sub-agent work, parallelize independent tasks, assign disjoint ownership, and keep
-high-blast-radius judgment in the main context. Give every dispatch an explicit model,
-ground-truth paths, evidence requirements, and a stop condition. Verify returned claims
-against the diff and source before relaying them.
-
-For development servers, check the canonical port before starting one and reuse the
-project's existing server. Do not allow automatic port drift. Kill only duplicates from
-the same project or processes you started. Report any intentional survivor with its PID,
-port, and URL.
+- Explicit session handoff: `handoff`.
 
 ## Communication
 

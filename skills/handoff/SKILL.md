@@ -1,5 +1,5 @@
 ---
-name: compact
+name: handoff
 description: Write the session's state to a handoff file in specs/handoffs/ so a fresh session resumes where this one stopped. Use only when the user explicitly asks to compact, hand off, or wrap up for a clean restart.
 ---
 

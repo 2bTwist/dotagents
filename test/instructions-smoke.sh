@@ -26,7 +26,7 @@
 #     Task state is never treated as durable by default, the legacy broad
 #     "Grow project memory" directive is gone, and memory-templates/ is no
 #     longer an active source tree.
-#   - Compacting durable task context is explicit-user-only. The compact skill
+#   - Compacting durable task context is explicit-user-only. The handoff skill
 #     must not trigger itself at phase boundaries or from context-budget state.
 #   - Every install run this script performs exits 0.
 #
@@ -54,7 +54,7 @@ REPO_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
 INSTALLER="$REPO_ROOT/install.sh"
 LIB_SH="$REPO_ROOT/install.d/_lib.sh"
 CORE_MD="$REPO_ROOT/instructions/core.md"
-COMPACT_MD="$REPO_ROOT/skills/compact/SKILL.md"
+HANDOFF_MD="$REPO_ROOT/skills/handoff/SKILL.md"
 HIGH_RISK_MD="$REPO_ROOT/instructions/references/high-risk-engineering.md"
 
 PASS=0
@@ -777,10 +777,10 @@ fi
 
 group "durable-context-trigger"
 
-COMPACT_EXPLICIT_TRIGGER="Use only when the user explicitly asks to compact, hand off, or wrap up for a clean restart."
-compactDescription=""
-if [[ -f "$COMPACT_MD" ]]; then
-  compactDescription="$(awk '
+HANDOFF_EXPLICIT_TRIGGER="Use only when the user explicitly asks to compact, hand off, or wrap up for a clean restart."
+handoffDescription=""
+if [[ -f "$HANDOFF_MD" ]]; then
+  handoffDescription="$(awk '
     NR==1 && $0=="---" { infm=1; next }
     infm && $0=="---" { exit }
     infm && /^description:/ {
@@ -788,28 +788,28 @@ if [[ -f "$COMPACT_MD" ]]; then
       print
       exit
     }
-  ' "$COMPACT_MD")"
+  ' "$HANDOFF_MD")"
 fi
 
-case "$compactDescription" in
-  *"$COMPACT_EXPLICIT_TRIGGER"*)
-    pass "[#17] compact skill declares the exact explicit-user-only trigger"
+case "$handoffDescription" in
+  *"$HANDOFF_EXPLICIT_TRIGGER"*)
+    pass "[#17] handoff skill declares the exact explicit-user-only trigger"
     ;;
   *)
-    fail "[#17] compact skill declares the exact explicit-user-only trigger (expected exact statement: '$COMPACT_EXPLICIT_TRIGGER')"
+    fail "[#17] handoff skill declares the exact explicit-user-only trigger (expected exact statement: '$HANDOFF_EXPLICIT_TRIGGER')"
     ;;
 esac
 
-COMPACT_AUTOMATIC_TRIGGERS=(
+HANDOFF_AUTOMATIC_TRIGGERS=(
   "phase boundary"
   "context budget is warned"
   "nearly spent"
 )
-for automaticTrigger in "${COMPACT_AUTOMATIC_TRIGGERS[@]}"; do
-  if printf '%s\n' "$compactDescription" | grep -qiF -- "$automaticTrigger"; then
-    fail "[#18] compact skill rejects automatic trigger '$automaticTrigger' (expected absent from description, found it)"
+for automaticTrigger in "${HANDOFF_AUTOMATIC_TRIGGERS[@]}"; do
+  if printf '%s\n' "$handoffDescription" | grep -qiF -- "$automaticTrigger"; then
+    fail "[#18] handoff skill rejects automatic trigger '$automaticTrigger' (expected absent from description, found it)"
   else
-    pass "[#18] compact skill rejects automatic trigger '$automaticTrigger'"
+    pass "[#18] handoff skill rejects automatic trigger '$automaticTrigger'"
   fi
 done
 
