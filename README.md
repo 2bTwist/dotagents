@@ -72,6 +72,7 @@ the second was emptied on purpose to keep Pi's system prompt small.
 | `groundwork` | Lay the foundation for a task class new to the repo. Fetches canonical guidance, finds reference implementations, compares against the repo, writes a phased plan. |
 | `first-principles` | Re-frame a task from scratch: name the incumbent approach, question its assumptions, decompose into primitives, rebuild the one worth rethinking. |
 | `research` | Map how an area works today, in the codebase or on the web. Parallel sub-agents, strict no-recommendations rule. |
+| `discuss` | Walk through research as a prerequisite graph, one concept per turn with teach-back checks, so you understand it before a grill. Saves resumable state to `specs/discussions/`. |
 | `plan` | Turn a task into a decision-complete phased plan with per-phase verification. |
 | `implement` | Execute a plan phase by phase, dispatching a phase's independent parts in parallel, pausing for manual verification between phases. |
 | `oneshot` | Escape hatch for small contained tasks, with guardrails against scope creep. |
@@ -80,8 +81,7 @@ the second was emptied on purpose to keep Pi's system prompt small.
 | `agent-latency-audit` | Attribute an agent session's wall-clock time across inference, tool execution, approval waits, and external processes. |
 | `design-engineering` | Design direction and taste for UI work, applied before markup rather than after. |
 | `animation-vocabulary` | Reverse-lookup glossary for naming a motion effect precisely. |
-| `perf-harness-init` | Scaffold the performance harness (budgets, measurement engines, verifier CLI, CI) into a React or web project. |
-| `perf-loop` | Diff-driven browser test and performance optimization loop that runs until budgets pass. |
+| `show-me` | Explain the current topic visually: pseudocode, call trees, component and file trees, Mermaid, diffs, or one focused HTML file. Vendored from humanlayer/skills. |
 | `codex-review` | Get an independent review of a diff from Codex CLI, verified against the code before relaying. |
 | `codex-implementation` | Delegate a scoped change to Codex CLI, then inspect its diff and verification. |
 | `codex-imagegen` | Generate or edit real image files through Codex CLI's bundled imagegen skill. |

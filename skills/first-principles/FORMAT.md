@@ -32,9 +32,9 @@ If we ship the rebuild, what is self-evidently true that needs no marketing? Wha
 What features will we be tempted to add later that actually belong in a different product? Name them explicitly so future-us can resist them.
 
 ## Hand-off
-- To operationalize the rebuild: `/plan <doc-path>`.
-- To stress-test this framing first: grill the doc's tradeoffs (the `grill-me` skill if installed).
-- If this analysis is rejected and the conventional approach holds: `/plan` directly without first-principles framing.
+- To operationalize the rebuild: grill the doc's tradeoffs (the `grilling` skill if installed), then `/implement` the decision record it produces.
+- The grill comes first on purpose. It is what catches a section that is confidently half right, and it settles the decisions `/implement` needs.
+- If this analysis is rejected and the conventional approach holds: grill the conventional approach directly, without first-principles framing.
 ```
 
 ## Negative-result mode
@@ -54,5 +54,5 @@ After analysis, the conventional approach to `<topic>` holds. Current incumbent 
 - Embarrassingly bad primitive: <"none surfaced", with the specific check that ruled this out>
 
 ## Hand-off
-Proceed with `/plan <topic>` using the conventional approach. No reframe needed.
+Proceed by grilling <topic> using the conventional approach. No reframe needed.
 ```

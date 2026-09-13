@@ -1,0 +1,7 @@
+name: perf
+requires:
+summary: Web performance harness. perf-harness-init scaffolds the measurement
+  stack into a React or web project and perf-loop drives a change to a passing
+  budget. Optional because a 119-session census (2026-09-11) found neither skill
+  ever invoked, and every installed skill description costs tokens on every turn.
+  Install with --with-optional when a project needs perf budgets.

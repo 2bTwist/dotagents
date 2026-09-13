@@ -1,6 +1,6 @@
 ---
 name: first-principles
-description: Re-frame a substantial task from first principles before /plan — name the incumbent approach, question its assumptions, decompose into atomic primitives, propose the embarrassingly-good rebuild of the one worth rethinking. Writes the analysis to specs/first-principles/YYYY-MM-DD-<slug>.md. Suggest invoking before a new feature surface, an architectural decision, or a product direction with an obvious incumbent to copy. Skip for bug fixes, /oneshot work, pure mapping (/research), or anything with prior art already in this repo.
+description: Re-frame a substantial task from first principles before it gets built — name the incumbent approach, question its assumptions, decompose into atomic primitives, propose the embarrassingly-good rebuild of the one worth rethinking. Writes the analysis to specs/first-principles/YYYY-MM-DD-<slug>.md. Suggest invoking before a new feature surface, an architectural decision, or a product direction with an obvious incumbent to copy. Skip for bug fixes, /oneshot work, pure mapping (/research), or anything with prior art already in this repo.
 model: opus
 harness:
   degrades: [subagents]
@@ -8,7 +8,7 @@ harness:
 
 # First-Principles Re-framing
 
-Apply the Pierre Computer Company analysis to a topic the user names, in the section structure [`FORMAT.md`](FORMAT.md) fixes. **The agent does the reasoning; the user reviews and pushes back.** This is not an interview. The output is an agent-authored doc that questions the conventional framing before `/plan` operationalizes a solution.
+Apply the Pierre Computer Company analysis to a topic the user names, in the section structure [`FORMAT.md`](FORMAT.md) fixes. **The agent does the reasoning; the user reviews and pushes back.** This is not an interview. The output is an agent-authored doc that questions the conventional framing before a solution gets operationalized.
 
 The skill is **topic-agnostic**. It does not hardcode domain, stack, or industry. The argument the user supplies — fuzzy or precise — determines what the analysis targets.
 
@@ -20,7 +20,7 @@ Execute steps immediately. Do not announce what you are about to do. Start with 
 
 1. **The analysis is yours.** This skill is not an interview. The user names the topic; the agent does the seven-step thinking and writes the doc. Do not punt the work back by asking the user "what's the lazy bias here?" — that's your job.
 2. **Specific beats general.** Generic insights about "first principles" are useless. Every conclusion must be specific to the user's actual topic, with citations from sub-agent findings (repo, web, canon). Vague reframes are a failed run.
-3. **Negative results are valid.** If the analysis concludes the conventional approach is correct and no reframe surfaces, emit a short doc recording that, hand off to `/plan` or `/oneshot`, and stop. Do not invent a reframe to fill sections.
+3. **Negative results are valid.** If the analysis concludes the conventional approach is correct and no reframe surfaces, emit a short doc recording that, hand off to a grill or `/oneshot`, and stop. Do not invent a reframe to fill sections.
 4. **One mutable primitive.** Section 5 proposes the embarrassingly-good rebuild of *one* primitive, not all of them. Restraint over feature checklist. If multiple primitives are candidates, name the most underserved one and address only it.
 5. **Cite or omit.** Every load-bearing claim (the named lazy bias, the named recent shift, the named bad primitive) cites either a URL from web search, a file path from the repo, or an entry from `CANON.md`. Uncited assertions are removed.
 
@@ -57,11 +57,11 @@ Output a 3-line chat summary:
 2. The named lazy bias and the proposed rebuild's primitive (or "no reframe" if negative result).
 3. The hand-off line from the doc.
 
-Do not auto-invoke `/plan` or start a stress-test pass. Stop and wait.
+Do not auto-invoke a grill, `/plan`, or a stress-test pass. Stop and wait.
 
 ## When invoked on the wrong task
 
-If invoked on a task the description's SKIP guidance matches (bug fix, rename, color change, well-established repo pattern, work where the framing is already settled), push back in one sentence and suggest the right tool (`/oneshot`, `/research`, or direct `/plan`). Do not run a forced analysis.
+If invoked on a task the description's SKIP guidance matches (bug fix, rename, color change, well-established repo pattern, work where the framing is already settled), push back in one sentence and suggest the right tool (`/oneshot`, `/research`, or going straight to a grill). Do not run a forced analysis.
 
 ## Iteration
 
