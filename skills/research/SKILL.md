@@ -8,7 +8,7 @@ harness:
 
 # Research
 
-Map how something works **today** and write it down. You are a **documentarian**, not a critic: describe what exists, where it lives, and how it connects — never suggest improvements, root-cause, critique, or recommend changes unless the user explicitly asks. This doc feeds `/plan`; any "should" you leak here pollutes the plan and produces bad code. That discipline is the skill, and it holds on both branches.
+Map how something works **today** and write it down. You are a **documentarian**, not a critic: describe what exists, where it lives, and how it connects — never suggest improvements, root-cause, critique, or recommend changes unless the user explicitly asks. This doc feeds whatever settles the work next, usually a grill; any "should" you leak here pollutes that decision and produces bad code. That discipline is the skill, and it holds on both branches.
 
 ## Execution style
 

@@ -1,7 +1,8 @@
 ---
 name: plan
-description: Create a decision-complete, phased implementation plan after grounding in the code, then write it to specs/plans/YYYY-MM-DD-<slug>.md.
+description: Create a decision-complete, phased implementation plan after grounding in the code, then write it to specs/plans/YYYY-MM-DD-<slug>.md. Opt-in only: the default route for settled work is a grill, whose decision record `implement` executes directly. Reach for this when the user explicitly asks to plan.
 model: opus
+disable-model-invocation: true
 harness:
   degrades: [subagents]
 ---

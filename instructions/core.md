@@ -134,7 +134,7 @@ then use judgment. Silent deviation and mechanical compliance are both failures.
 
 Load the relevant skill instead of reproducing its procedure here:
 
-- New task classes or large features: `groundwork`, then grill, `plan`, and `implement`.
+- New task classes or large features: `groundwork`, grill, `implement` the decision record.
 - Current-state mapping or multi-source research: `research`.
 - Reframing a substantial incumbent approach: `first-principles`.
 - Small contained edits: `oneshot`.

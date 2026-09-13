@@ -7,7 +7,7 @@ description: Direct execution for small, contained, low-risk tasks (rename, colo
 
 The escape hatch for changes too small for Research → Plan → Implement: renames, visual tweaks (color, spacing, font size), one-line fixes with an obvious cause, copy/config changes, a missing import/type/prop. Contained, obvious, low-risk.
 
-**Escalate to `/plan`** the moment it isn't: new features, changes touching multiple concerns, unclear root cause (use `/research` first), anything that cascades (shared utilities, widely-consumed types), or any "while I'm here" temptation.
+**Escalate the moment it isn't** (grill it, or `/plan` if you were told to plan): new features, changes touching multiple concerns, unclear root cause (use `/research` first), anything that cascades (shared utilities, widely-consumed types), or any "while I'm here" temptation.
 
 ## Execution style
 
@@ -15,16 +15,16 @@ Execute immediately — no preamble, start with the first grep/read/edit. Pause 
 
 ## Steps
 
-1. **Locate.** Grep/Glob/LS to the exact file(s). Three searches is the budget: if the target is still not pinned to a `file:line` after the third, STOP — not one-shot material; offer `/research` or `/plan`.
+1. **Locate.** Grep/Glob/LS to the exact file(s). Three searches is the budget: if the target is still not pinned to a `file:line` after the third, STOP — not one-shot material; offer `/research`, or a grill to settle it.
 2. **Read fully** (no `limit`/`offset`) the target and any close neighbour (import, type definition).
 3. **Safety check before editing.** Grep the symbol repo-wide, and answer all three:
-   - How many other call sites are there? **More than two → STOP → `/plan`.**
-   - Does a test pin this behaviour? **Yes → the test is the spec; if the fix changes what it asserts, STOP → `/plan`.**
-   - Is there an invariant here the change could break (a null guard, an ordering assumption, a cached value)? **Yes → STOP → `/plan`.**
+   - How many other call sites are there? **More than two → STOP → grill it.**
+   - Does a test pin this behaviour? **Yes → the test is the spec; if the fix changes what it asserts, STOP → grill it.**
+   - Is there an invariant here the change could break (a null guard, an ordering assumption, a cached value)? **Yes → STOP → grill it.**
 
    Three clean answers is the only way past this step.
 4. **Edit.** Minimal diff. No unrelated cleanup, no drive-by refactor.
-5. **Verify.** Run the smallest relevant check (type check / lint / targeted test, or the project's single check command). One attempt to fix a failure it surfaces; a second failure means the cause was not what you thought — STOP → `/plan`.
+5. **Verify.** Run the smallest relevant check (type check / lint / targeted test, or the project's single check command). One attempt to fix a failure it surfaces; a second failure means the cause was not what you thought — STOP → grill it.
 6. **Report.** What changed (`file:line`), what you verified, and anything you noticed but deliberately left untouched.
 
 ## Guardrails
