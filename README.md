@@ -80,8 +80,6 @@ the second was emptied on purpose to keep Pi's system prompt small.
 | `agent-latency-audit` | Attribute an agent session's wall-clock time across inference, tool execution, approval waits, and external processes. |
 | `design-engineering` | Design direction and taste for UI work, applied before markup rather than after. |
 | `animation-vocabulary` | Reverse-lookup glossary for naming a motion effect precisely. |
-| `perf-harness-init` | Scaffold the performance harness (budgets, measurement engines, verifier CLI, CI) into a React or web project. |
-| `perf-loop` | Diff-driven browser test and performance optimization loop that runs until budgets pass. |
 | `codex-review` | Get an independent review of a diff from Codex CLI, verified against the code before relaying. |
 | `codex-implementation` | Delegate a scoped change to Codex CLI, then inspect its diff and verification. |
 | `codex-imagegen` | Generate or edit real image files through Codex CLI's bundled imagegen skill. |
