@@ -80,6 +80,7 @@ the second was emptied on purpose to keep Pi's system prompt small.
 | `agent-latency-audit` | Attribute an agent session's wall-clock time across inference, tool execution, approval waits, and external processes. |
 | `design-engineering` | Design direction and taste for UI work, applied before markup rather than after. |
 | `animation-vocabulary` | Reverse-lookup glossary for naming a motion effect precisely. |
+| `show-me` | Explain the current topic visually: pseudocode, call trees, component and file trees, Mermaid, diffs, or one focused HTML file. Vendored from humanlayer/skills. |
 | `codex-review` | Get an independent review of a diff from Codex CLI, verified against the code before relaying. |
 | `codex-implementation` | Delegate a scoped change to Codex CLI, then inspect its diff and verification. |
 | `codex-imagegen` | Generate or edit real image files through Codex CLI's bundled imagegen skill. |
