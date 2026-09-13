@@ -72,6 +72,7 @@ the second was emptied on purpose to keep Pi's system prompt small.
 | `groundwork` | Lay the foundation for a task class new to the repo. Fetches canonical guidance, finds reference implementations, compares against the repo, writes a phased plan. |
 | `first-principles` | Re-frame a task from scratch: name the incumbent approach, question its assumptions, decompose into primitives, rebuild the one worth rethinking. |
 | `research` | Map how an area works today, in the codebase or on the web. Parallel sub-agents, strict no-recommendations rule. |
+| `discuss` | Walk through research as a prerequisite graph, one concept per turn with teach-back checks, so you understand it before a grill. Saves resumable state to `specs/discussions/`. |
 | `plan` | Turn a task into a decision-complete phased plan with per-phase verification. |
 | `implement` | Execute a plan phase by phase, dispatching a phase's independent parts in parallel, pausing for manual verification between phases. |
 | `oneshot` | Escape hatch for small contained tasks, with guardrails against scope creep. |
