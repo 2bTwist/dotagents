@@ -45,6 +45,11 @@ then use judgment. Silent deviation and mechanical compliance are both failures.
   comprehension, maintainability, and scalability before implementation convenience.
 - **Repair the touched surface.** Fix exposed defects that affect the requested
   behavior or its guarantees. Record unrelated defects instead of expanding the task.
+- **Ship reviewable units.** Size a change so one person can read all of it. Past roughly
+  800 added lines of code a reviewer must reason about (tests, lockfiles, generated files
+  and docs excluded), split along a seam; when it genuinely cannot split, say why in one
+  line. More small changes beat one large one, even at the cost of stacking. Read
+  `references/reviewable-change.md` when sizing the unit or naming what a person must read.
 - **Put guarantees at the lowest effective layer.** Prefer data structures,
   constraints, types, and hard-to-misuse interfaces over repeated caller discipline.
 - **No AI attribution.** Do not add AI co-author trailers, generated-by footers, or AI
@@ -69,6 +74,14 @@ then use judgment. Silent deviation and mechanical compliance are both failures.
 ## Verification and author bias
 
 - Do not trust generated code merely because tests pass. Understand the system, identify its invariants, and verify risky interactions.
+- Shape the code for the system, not for the tests. A guard, fallback, widened type, or
+  swallowed failure added so a check passes is a defect wearing a fix. When a test cannot
+  reach the code, add the seam the test needs; a workaround keeps the failure silent in
+  production, where it costs most.
+- Name the read set. Every change names the small set of files a person should read line by
+  line, chosen by risk class: money, identity, durable state, migrations, concurrency,
+  external effects, trust boundaries. Report what was read and by whom, and never imply
+  review coverage that did not happen.
 - Scale rigor with blast radius. Work is high risk where failure can corrupt, lose,
   expose, or misattribute authoritative, financial, identity, security, or shared
   coordination state, including payments, credentials, migrations, external writes,
@@ -135,6 +148,7 @@ then use judgment. Silent deviation and mechanical compliance are both failures.
 Load the relevant skill instead of reproducing its procedure here:
 
 - New task classes or large features: `groundwork`, grill, `implement` the decision record.
+- Types, signatures, call paths and seams before implementation: `program-design`.
 - Current-state mapping or multi-source research: `research`.
 - Reframing a substantial incumbent approach: `first-principles`.
 - Small contained edits: `oneshot`.
@@ -152,3 +166,8 @@ Load the relevant skill instead of reproducing its procedure here:
 - In technical prose, remove ornament but retain caveats, numbers, and reasons. Do not
   introduce em dashes into user-facing or public writing, and do not sweep pre-existing
   prose merely to enforce that preference.
+- Match a written document's length to what the task needs: the substance, without
+  filler sections, repeated summaries, or boilerplate.
+- Correct an earlier statement only when the error would change the user's code,
+  conclusions, or decisions; say it in one sentence and continue. Fix slips that change
+  nothing without comment.

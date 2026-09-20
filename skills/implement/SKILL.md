@@ -1,7 +1,6 @@
 ---
 name: implement
 description: Execute settled work phase by phase from either a decision record (specs/decisions/, the usual case after a grill) or a plan (specs/plans/), dispatching a phase's independent parts in parallel, ticking checkboxes and pausing for manual verification between phases.
-disable-model-invocation: true
 harness:
   degrades: [subagents]
 ---
@@ -18,6 +17,7 @@ Execute immediately — don't announce, start by reading the source document. Pa
 
 Given a path (ask for one if absent):
 - Read it FULLY and note existing `- [x]` checkmarks. Read the ticket and every file it references, fully (no `limit`/`offset`).
+- When a design file covers this work (`specs/design/`, or one the source names), read it fully as well. Its signatures, call paths and seams are settled: build to them, and surface a mismatch rather than redesigning in the implementation.
 - **If it is a decision record, derive the phases yourself before writing any code.** A decision record settles *what* and *why*; it rarely states *in what order* or *checked how*. Build that from it and put it to the user for approval in one message, then proceed on their confirmation:
   - **Phases**, ordered by the record's own sequencing where it states one, and otherwise so that each phase leaves the tree working.
   - **The exact command that gates each phase.** Take it from the repository contract, not from habit. Where a repo separates gates that may read sensitive or operational material from those that may not, name which tier each command is in, and never schedule a gate the user has not authorized: say so and stop instead.
