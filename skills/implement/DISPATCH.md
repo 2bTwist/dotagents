@@ -57,7 +57,7 @@ can tell what was in flight from what was finished instead of reconstructing it 
 
 Send every independent part in ONE message. Parts sent in separate messages queue instead of
 overlapping, which makes the parallelism decorative. Pass an explicit model on each. Start any review
-concurrently with the build rather than after it.
+concurrently with the build rather than after it, except the attacker below.
 
 **Worktree isolation branches from the default branch, not from your working tree.** An agent given
 its own worktree sees a clean checkout of the remote default branch, so uncommitted work in progress
@@ -65,8 +65,8 @@ is invisible to it. Before dispatching writers into worktrees, either commit the
 or configure the worktree base ref to branch from HEAD, or leave the parts in the shared tree and
 rely on the disjoint file sets to keep them apart. Read-only parts are unaffected.
 
-One case is deliberately serial: a test written to fail first. Its whole value is the ordering, so
-wait for the author to report red before dispatching the implementation it covers.
+One case is deliberately serial: the separate agent that attacks the work with the `testing` skill.
+It needs the finished build to attack, so dispatch it when the part it covers reports done.
 
 **Done when:** all independent parts left in a single message.
 

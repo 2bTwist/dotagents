@@ -80,10 +80,9 @@ then use judgment. Silent deviation and mechanical compliance are both failures.
 - Scale rigor with blast radius. Work is high risk where failure can corrupt, lose,
   expose, or misattribute authoritative, financial, identity, security, or shared
   coordination state. Before implementing it, read `references/high-risk-engineering.md`.
-- For non-trivial work, settle observable acceptance criteria before implementation.
-  Confirm new tests fail against the missing or broken behavior, then keep them frozen
-  while making them pass. For high-risk work, have a separate agent author those tests
-  from the requirement, not the implementation.
+- For non-trivial work, use the `testing` skill before building, to settle claims and
+  seams, and after, to attack the surfaces the change touches. A separate agent that did
+  not write the code attacks it from the requirement. Never edit a test to make it pass.
 - Absent a repository test policy, ask before the first test file there and record the answer;
   never infer one from an existing suite.
 - Prefer behavior over interaction shape. Use realistic integration checks where mocks
