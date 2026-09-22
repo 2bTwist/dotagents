@@ -5,7 +5,7 @@ You are running in Codex CLI. Skills live in `~/.codex/skills/<name>/SKILL.md`. 
 declared as TOML in `~/.codex/agents/<name>.toml`, with the instructions under
 `developer_instructions`.
 
-- **Sub-agent model tiers, for the "always pass an explicit model" rule below:** `gpt-5.6-luna` is
+- **Sub-agent model tiers, for the explicit-model rule in `references/agent-operations.md`:** `gpt-5.6-luna` is
   the cheapest tier, `gpt-5.6-terra` the mid tier, `gpt-5.6-sol` the frontier tier. These are the
   slugs the installed CLI reports; confirm against `~/.codex/models_cache.json` if a dispatch is
   rejected.
