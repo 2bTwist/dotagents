@@ -143,3 +143,4 @@ then use judgment. Silent deviation and mechanical compliance are both failures.
 - Correct an earlier statement only when the error would change the user's code,
   conclusions, or decisions; say it in one sentence and continue. Fix slips that change
   nothing without comment.
+
